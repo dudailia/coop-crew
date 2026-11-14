@@ -1,0 +1,135 @@
+[
+ {
+  "source": "web",
+  "board": "example:fernway",
+  "company": "Fernway Finance",
+  "title": "Software Engineer Co-op (Spring 2027)",
+  "location": "Boston, MA",
+  "url": "https://jobs.example.com/fernway/50101",
+  "posting_id": "50101",
+  "posted": "2026-10-20",
+  "description": "Fernway Finance is a made-up company for the coop-crew demo. It builds payment and ledger software for small banks.\n\nThis is a six-month co-op from January 4 to June 25, 2027, at our Boston office, in person four days a week.\n\nYou will join the ledger team and build features end to end: design, code, tests, release and support in production.\n\nYou will work with Python, TypeScript, PostgreSQL and Kafka, and partner with a senior engineer on one project you own.\n\nWe look for students in a computer science or related program with one earlier internship or co-op.\n\nPay is $42 to $48 an hour. Applicants must be authorized to work in the US; this role does not offer visa sponsorship."
+ },
+ {
+  "source": "web",
+  "board": "example:fernway",
+  "company": "Fernway Finance",
+  "title": "Data Analyst Co-op (Spring 2027)",
+  "location": "New York, NY",
+  "url": "https://jobs.example.com/fernway/50102",
+  "posting_id": "50102",
+  "posted": "2026-10-22",
+  "description": "Fernway Finance is a made-up company for the coop-crew demo. It builds payment and ledger software for small banks.\n\nA six-month spring co-op, January to June 2027, in our New York office three days a week.\n\nYou will analyze payment volumes and build dashboards that the risk team uses every morning.\n\nYou will work with SQL, Python and a BI tool, and present one analysis to the product team at the end of the term.\n\nPay is $34 an hour."
+ },
+ {
+  "source": "web",
+  "board": "example:fernway",
+  "company": "Fernway Finance",
+  "title": "Sales Development Intern (Summer 2027)",
+  "location": "Boston, MA",
+  "url": "https://jobs.example.com/fernway/50103",
+  "posting_id": "50103",
+  "posted": "2026-10-25",
+  "description": "Fernway Finance is a made-up company for the coop-crew demo. It builds payment and ledger software for small banks.\n\nA 12-week summer internship, June to August 2027, on the sales team.\n\nYou will research prospects and support account executives with outreach."
+ },
+ {
+  "source": "web",
+  "board": "example:quillstack",
+  "company": "Quillstack Data",
+  "title": "Software Engineering Intern (Spring 2027)",
+  "location": "San Francisco, CA; Remote, US",
+  "url": "https://jobs.example.com/quillstack/60201",
+  "posting_id": "60201",
+  "posted": "2026-10-18",
+  "description": "Quillstack Data is a made-up company for the coop-crew demo. It makes a query engine for analytics teams.\n\nA spring 2027 internship of six months, starting in January, in San Francisco or remote in the US.\n\nYou will work on the query planner team and build features that make dashboards load faster.\n\nYou will write Go and Rust, own one project from design to release, and work with a mentor every week.\n\nPay is $50 an hour, plus a housing stipend for interns in San Francisco."
+ },
+ {
+  "source": "web",
+  "board": "example:quillstack",
+  "company": "Quillstack Data",
+  "title": "Machine Learning Co-op (Spring 2027)",
+  "location": "Boston, MA",
+  "url": "https://jobs.example.com/quillstack/60202",
+  "posting_id": "60202",
+  "posted": "2026-10-28",
+  "description": "Quillstack Data is a made-up company for the coop-crew demo. It makes a query engine for analytics teams.\n\nA six-month co-op, January to June 2027, at our Boston office.\n\nYou will build and test models that predict how long a query will take, and support the team that ships them.\n\nPython and one ML library are required; experience with SQL helps.\n\nPay is $40 an hour."
+ },
+ {
+  "source": "web",
+  "board": "example:quillstack",
+  "company": "Quillstack Data",
+  "title": "Software Engineering Intern (2027) - Berlin",
+  "location": "Berlin, Germany",
+  "url": "https://jobs.example.com/quillstack/60203",
+  "posting_id": "60203",
+  "posted": "2026-10-18",
+  "description": "Quillstack Data is a made-up company for the coop-crew demo. It makes a query engine for analytics teams.\n\nAn internship in our Berlin office in 2027, for students who can work in Germany.\n\nYou will build features for the storage layer with the Berlin engineering team."
+ },
+ {
+  "source": "web",
+  "board": "example:quillstack",
+  "company": "Quillstack Data",
+  "title": "PhD Research Intern, Query Optimization",
+  "location": "San Francisco, CA",
+  "url": "https://jobs.example.com/quillstack/60204",
+  "posting_id": "60204",
+  "posted": "2026-10-30",
+  "description": "Quillstack Data is a made-up company for the coop-crew demo. It makes a query engine for analytics teams.\n\nFor PhD students in databases or programming languages.\n\nYou will work on a research project in query optimization with our research team."
+ },
+ {
+  "source": "web",
+  "board": "example:quillstack",
+  "company": "Quillstack Data",
+  "title": "Product Design Intern (Summer 2027)",
+  "location": "San Francisco, CA",
+  "url": "https://jobs.example.com/quillstack/60205",
+  "posting_id": "60205",
+  "posted": "2026-10-30",
+  "description": "Quillstack Data is a made-up company for the coop-crew demo. It makes a query engine for analytics teams.\n\nA 12-week summer internship in San Francisco.\n\nYou will design screens for the query editor with the design team."
+ },
+ {
+  "source": "web",
+  "board": "example:harborlight",
+  "company": "Harborlight Robotics",
+  "title": "Embedded Software Intern [Spring 2027]",
+  "location": "San Jose, CA",
+  "url": "https://jobs.example.com/harborlight/70301",
+  "posting_id": "70301",
+  "posted": "2026-10-12",
+  "description": "Harborlight Robotics is a made-up company for the coop-crew demo. It builds warehouse robots that pick and pack orders.\n\nA spring 2027 internship in San Jose, on site five days a week, for at least 16 weeks starting in January.\n\nYou will develop firmware for the gripper controller in C and test it on real robots in the lab.\n\nExperience with microcontrollers and a hardware project from a class or team is a plus.\n\nPay is $38 to $44 an hour."
+ },
+ {
+  "source": "web",
+  "board": "example:harborlight",
+  "company": "Harborlight Robotics",
+  "title": "Deployment Engineering Intern",
+  "location": "San Jose, CA",
+  "url": "https://jobs.example.com/harborlight/70302",
+  "posting_id": "70302",
+  "posted": "2026-10-12",
+  "description": "Harborlight Robotics is a made-up company for the coop-crew demo. It builds warehouse robots that pick and pack orders.\n\nA 10-week internship starting in January 2027 at customer warehouses in California.\n\nYou will support field deployments, triage issues, write documentation and train customer staff on the robots.\n\nStrong technical writing and hands-on work with hardware are required."
+ },
+ {
+  "source": "web",
+  "board": "example:harborlight",
+  "company": "Harborlight Robotics",
+  "title": "Mechanical Engineering Intern [Spring 2027]",
+  "location": "San Jose, CA",
+  "url": "https://jobs.example.com/harborlight/70303",
+  "posting_id": "70303",
+  "posted": "2026-10-12",
+  "description": "Harborlight Robotics is a made-up company for the coop-crew demo. It builds warehouse robots that pick and pack orders.\n\nA spring 2027 internship in San Jose for mechanical engineering students.\n\nYou will design and test parts for the robot arm with the mechanical team."
+ },
+ {
+  "source": "web",
+  "board": "example:harborlight",
+  "company": "Harborlight Robotics",
+  "title": "Operations Intern [Spring 2027]",
+  "location": "Pittsburgh, PA",
+  "url": "https://jobs.example.com/harborlight/70304",
+  "posting_id": "70304",
+  "posted": "2026-10-14",
+  "description": "Harborlight Robotics is a made-up company for the coop-crew demo. It builds warehouse robots that pick and pack orders.\n\nA spring 2027 internship at our Pittsburgh test site.\n\nYou will support the operations team with scheduling and inventory.",
+  "deadline": "2026-11-01"
+ }
+]

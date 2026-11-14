@@ -141,6 +141,7 @@ def list_names(path, section=None):
         if section and section not in cur: continue
         m = re.match(r'^\s*[-*]\s+(.+)$', l)
         if not m: continue
+        if re.search(r'\[UNBANNED', m.group(1), re.I): continue
         n = m.group(1).split('|')[0].split('\t')[0].strip()
         if n and not n.startswith('('): out.append(n)
     return out

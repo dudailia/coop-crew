@@ -66,8 +66,10 @@ def find_dupe(c, r):
     if r.get('posting_id'):
         x = c.execute('select id from roles where source = ? and posting_id = ?', (r['source'], str(r['posting_id']))).fetchone()
         if x: return x['id']
-    for x in c.execute('select id, company, title from roles'):
-        if norm_title(x['title']) == norm_title(r['title']) and K.matches(r['company'], x['company']): return x['id']
+    # Same employer, same title, same place: the same role seen on two sources (a board and NUworks, say).
+    for x in c.execute('select id, company, title, location, url from roles'):
+        if norm_title(x['title']) == norm_title(r['title']) and K.matches(r['company'], x['company']) \
+                and norm_title(x['location']) == norm_title(r.get('location', '')): return x['id']
     return None
 
 def add_role(c, r):
