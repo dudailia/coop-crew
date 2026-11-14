@@ -24,3 +24,6 @@ vendor/jev/src/
 __pycache__/
 *.pyc
 .DS_Store
+
+# the build log names the maintainer: kept local
+/BUILD-LOG.md
