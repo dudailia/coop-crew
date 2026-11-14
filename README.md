@@ -79,7 +79,8 @@ Twelve agents in `.claude/agents/`, six skills in `.claude/skills/`, the command
 - Every number and name in outgoing text must be in your `profile/facts.md` (or the posting): the checker and the resume
   build fail otherwise. Work authorization is your sentence, word for word, per country.
 - No LinkedIn automation, no aggregators, no scraping behind logins. NUworks is read only, through a local server that
-  has no apply, message, upload or edit tools, and ships **disabled** ([mcp/nuworks/APPROVAL.md](mcp/nuworks/APPROVAL.md)).
+  has no apply, message, upload or edit tools. It is approved by the Northeastern co-op office for read-only use and is
+  **off by default**: each student turns it on themselves ([mcp/nuworks/APPROVAL.md](mcp/nuworks/APPROVAL.md)).
 - Questions that ask you to confirm an answer is your own work written without AI are never drafted.
 - Your data stays on your machine: `profile/`, `data/`, `out/` and the pages are never committed.
 
@@ -98,5 +99,5 @@ python3 -I tools/pii_scan.py                 # personal-data scan of the tree an
 ## Credits
 
 MIT licensed ([LICENSE](LICENSE)). Built on jev-job-search by Qendrim Beka (MIT), job-agents-kit, and the
-job-applications and anti-slop skills by their original author. See [THIRD_PARTY.md](THIRD_PARTY.md). Not affiliated
+job-applications and anti-slop skills by the author (MIT, with his permission). See [THIRD_PARTY.md](THIRD_PARTY.md). Not affiliated
 with Northeastern University or Symplicity.

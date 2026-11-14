@@ -13,11 +13,13 @@ description: >-
 ---
 # Anti-slop
 
+By the author, adapted for coop-crew (MIT, included with his permission; see THIRD_PARTY.md). <!-- TODO: add the author's GitHub handle -->
+
 Clean outgoing prose so it reads like its author wrote it. Keep what it says, and add nothing.
 
 This file is the house layer. It holds the hard locks, the scope, and the order of work. The pattern catalogues are in `references/`. They are exact copies of the vendored upstream skills and should be replaced as a set when upstream changes. When a catalogue disagrees with this file, this file wins.
 
-In coop-crew the catalogues are not committed to the repository, because their licenses are not yet confirmed for redistribution. `tools/fetch_antislop_refs.sh` installs them into `references/` on the student's machine. If `references/` is missing, apply the hard locks, the genre rules and the fallback list at the end of this file, and say in your note that the catalogues were not available.
+In coop-crew the catalogues are not committed to the repository, because their own third-party licenses are not confirmed for redistribution (permission for this skill does not cover them). `tools/fetch_antislop_refs.sh` installs them into `references/` on the student's machine. If `references/` is missing, apply the hard locks, the genre rules and the fallback list at the end of this file, and say in your note that the catalogues were not available.
 
 ## Hard locks
 

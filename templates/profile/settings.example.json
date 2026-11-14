@@ -60,6 +60,6 @@
     "linkedin_note_max": 300, "followup_max_lines": 2
   },
 
-  "_nuworks": "Off until the co-op office's written OK (mcp/nuworks/APPROVAL.md) and your own choice in /setup.",
+  "_nuworks": "Off by default. Approved by the co-op office for read-only use (mcp/nuworks/APPROVAL.md); you turn it on yourself with tools/nuworks_enable.py.",
   "nuworks": { "enabled": false }
 }

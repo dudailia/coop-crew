@@ -1,12 +1,12 @@
-# nuworks-mcp (read-only, ships disabled)
+# nuworks-mcp (read-only, opt-in)
 
 A local MCP server that reads NUworks job listings the student can already see. It runs on the student's own machine
 over stdio, through Playwright and a browser profile kept in `data/nuworks/browser-profile`. NUworks runs on Symplicity
 CSM, which has no student API.
 
-**Status: disabled.** It ships off until Northeastern's co-op office or IT gives written OK for automated read access,
-and someone has checked that it does not break the NUworks or Symplicity terms of use. See [APPROVAL.md](APPROVAL.md).
-Without that OK, the rest of coop-crew works without it, in "external" or "self-developed" mode.
+**Status: approved, off by default.** The Northeastern co-op office approved read-only access to listings the
+student can already see (14 Nov 2026; `APPROVAL.md`). It stays off in every install until the student turns it on with
+`python3 -I tools/nuworks_enable.py on`.
 
 ## Tools (exactly five)
 

@@ -6,8 +6,9 @@ description: Use whenever reading NUworks (Northeastern's Symplicity job board) 
 
 NUworks runs on Symplicity CSM. There is no student API. The nuworks MCP server reads only what the signed-in student
 can already see, in their own browser session saved on their machine. It is **off by default** and on only when the
-student turned it on themselves (`tools/nuworks_enable.py on`) in mode "nuworks+external". Northeastern has not yet
-given written OK for automated read access (`mcp/nuworks/APPROVAL.md`).
+student turned it on themselves (`tools/nuworks_enable.py on`) in mode "nuworks+external". The Northeastern co-op
+office approved read-only access to listings the student can already see (`mcp/nuworks/APPROVAL.md`); stay inside that
+scope.
 
 ## Tools (the only ones that exist)
 

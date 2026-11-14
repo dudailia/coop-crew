@@ -68,7 +68,7 @@ function gate() {
   const s = settings();
   if (!s) return `NUworks is disabled: ${SETTINGS_FILE} does not exist. Run /setup first.`;
   if (s.mode !== 'nuworks+external') return `NUworks is disabled: sourcing mode is "${s.mode || 'unset'}", not "nuworks+external".`;
-  if (!(s.nuworks && s.nuworks.enabled === true)) return 'NUworks is disabled: profile/settings.json has no "nuworks": {"enabled": true}. It ships disabled until the co-op office approves automated read access (mcp/nuworks/APPROVAL.md).';
+  if (!(s.nuworks && s.nuworks.enabled === true)) return 'NUworks is disabled: profile/settings.json has no "nuworks": {"enabled": true}. It is off by default: the student turns it on with tools/nuworks_enable.py (approved read-only scope: mcp/nuworks/APPROVAL.md). Automated read access (mcp/nuworks/APPROVAL.md).';
   return null;
 }
 function stopped() { return STOP_FILES.find((f) => fs.existsSync(f)) || null; }

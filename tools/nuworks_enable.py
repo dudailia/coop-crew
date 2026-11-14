@@ -10,9 +10,9 @@ import crew as K
 LOCAL = f'{K.ROOT}/.claude/settings.local.json'
 NOTICE = """The NUworks reader signs in as you (you type your own password and Duo) and reads job listings you can already see.
 It never applies, messages, uploads, RSVPs or edits your profile, waits 3 to 5 seconds between pages, reads at most 100
-postings a run, and stops on any CAPTCHA or error page. Northeastern has NOT yet confirmed in writing that automated read
-access is allowed (mcp/nuworks/APPROVAL.md). Turning it on is your choice and your responsibility under NUworks and
-Symplicity terms of use."""
+postings a run, and stops on any CAPTCHA or error page. The Northeastern co-op office approved this read-only use
+(mcp/nuworks/APPROVAL.md). Turning it on is still your choice, and you stay responsible for using it within that scope
+and within the NUworks and Symplicity terms of use."""
 
 def main():
     a = sys.argv[1] if len(sys.argv) > 1 else 'status'
