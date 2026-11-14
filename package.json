@@ -5,9 +5,14 @@
   "type": "module",
   "description": "A multi-agent co-op and internship search crew for students, built on Claude Code.",
   "license": "MIT",
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "test:nuworks": "node --test mcp/nuworks/test/server.test.mjs"
+    "test": "python3 -m unittest discover -s tests && node --test mcp/nuworks/test/server.test.mjs",
+    "test:nuworks": "node --test mcp/nuworks/test/server.test.mjs",
+    "test:py": "python3 -m unittest discover -s tests -v",
+    "scan": "python3 -I tools/pii_scan.py"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

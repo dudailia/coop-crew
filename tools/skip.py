@@ -1,6 +1,6 @@
 # Closes items without submitting or sending: /skip <ids>. A skipped role keeps its files in out/<id>/.
 # usage: python3 -I tools/skip.py <id> [<id> ...] [--why "..."]
-import os, sys
+import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pipeline as P
 
@@ -21,5 +21,7 @@ def skip(ids, why='skipped by the student'):
 if __name__ == '__main__':
     a = sys.argv[1:]; why = 'skipped by the student'
     if '--why' in a: i = a.index('--why'); why = a[i + 1]; a = a[:i] + a[i + 2:]
+    a = [x for y in a for x in re.split(r'[\s,]+', y) if x]
     if not a: sys.exit('usage: /skip <id> [<id> ...]')
+    if any(not re.fullmatch(r'[A-Za-z0-9_.-]{1,80}', x) for x in a): sys.exit('ids are letters, digits, dots and dashes; copy them from TODAY.html')
     print('\n'.join(skip(a, why)))

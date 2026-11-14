@@ -36,13 +36,23 @@ def py(tool, *args):
     return r.returncode, out
 
 # ---- offline stand-ins for the agent steps ----
+ROLE_WORDS = re.compile(r'\b(intern|co-?op|you will|you\'ll|responsib|team|work (on|with)|build|develop|analy[sz]|support|own|partner|project)', re.I)
+FLUFF = re.compile(r'passionate|world\'s (best|leading)|toughest|equal (employment )?opportunit|benefits|salary|pay (range|transparency)|'
+                   r'compensation|accommodat|privacy|applicants?|e-?verify|we are hiring for|recruit', re.I)
+
 def offline_brief(rid, r):
+    """Offline stand-in for the researcher: 3 to 5 sentences from the posting about the role and the team."""
     text = K.read(f'{K.OUT}/{rid}/posting.md')
-    body = '\n'.join(l for l in text.splitlines()[5:] if l.strip())
-    sents = [s.strip() for s in re.split(r'(?<=[.!?])\s+', body) if 40 < len(s.strip()) < 220][:4]
-    while len(sents) < 3: sents.append(f'{r["company"]} posted this role as {r["title"]} ({r["location"] or "location not stated"}).')
+    body = ' '.join(l.strip() for l in text.splitlines()[5:] if l.strip() and not l.startswith('#'))
+    sents = [s.strip().replace(' \u2014 ', ', ').replace('\u2014', ', ') for s in re.split(r'(?<=[.!?])\s+', body)]
+    good = [s for s in sents if 50 < len(s) < 220 and ROLE_WORDS.search(s) and not FLUFF.search(s)][:5]
+    fill = [f'{r["company"]} posted this role as {r["title"]}.', f'Location: {r["location"] or "not stated"}.',
+            f'Posted {r["posted"]}.' if r['posted'] else 'Posting date not stated.', f'Deadline: {r["deadline"] or "not stated"}.']
+    for f in fill:
+        if len(good) >= 3: break
+        good.append(f)
     open(f'{K.OUT}/{rid}/brief.md', 'w', encoding='utf-8').write(
-        f'# Company brief: {r["company"]}\n\n' + ''.join(f'- {s}\n' for s in sents[:6]) + f'\nSource: {r["url"]}\n')
+        f'# Company brief: {r["company"]}\n\n' + ''.join(f'- {s}\n' for s in good) + f'\nSource: {r["url"]} (offline: from the posting only)\n')
 
 def offline_pack(rid, r):
     d = f'{K.OUT}/{rid}'

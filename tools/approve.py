@@ -5,7 +5,7 @@
 # sender then drafts or sends it in its window). NUworks roles are never submitted by the crew: approving one only marks it
 # "apply in NUworks yourself".
 # usage: python3 -I tools/approve.py <id> [<id> ...]
-import os, sys
+import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crew as K, pipeline as P
 
@@ -43,7 +43,10 @@ def approve(ids, source='session'):
     return out
 
 if __name__ == '__main__':
-    ids = [a for a in sys.argv[1:] if not a.startswith('--')]
+    # /approve passes everything as one quoted argument: split on spaces and commas, and accept only id characters.
+    ids = [x for a in sys.argv[1:] if not a.startswith('--') for x in re.split(r'[\s,]+', a) if x]
+    bad = [x for x in ids if not re.fullmatch(r'[A-Za-z0-9_.-]{1,80}', x)]
+    if bad: sys.exit(f'not an id: {", ".join(bad)} (ids are letters, digits, dots, dashes; copy them from TODAY.html)')
     if not ids: sys.exit('usage: /approve <id> [<id> ...]   (ids are in TODAY.html)')
     K.exit_if_stopped('/approve')
     print('\n'.join(approve(ids)))

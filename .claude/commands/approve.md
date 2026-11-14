@@ -3,7 +3,7 @@ description: Approve applications or emails by id (from TODAY.html). The applica
 argument-hint: <id> [<id> ...]
 disable-model-invocation: true
 ---
-!`python3 -I tools/approve.py $ARGUMENTS`
+!`python3 -I tools/approve.py '$ARGUMENTS' || true`
 
 The student approved the ids above (the lines say what was recorded; a line saying "NOT approved" was not).
 
