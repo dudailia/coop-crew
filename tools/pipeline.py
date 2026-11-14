@@ -5,7 +5,8 @@
 #        python3 -I tools/pipeline.py import [file-or-folder ...]      roles from scouts (default data/incoming/*.json)
 #        python3 -I tools/pipeline.py import-emails <file.json>        email and LinkedIn drafts from outreach
 #        python3 -I tools/pipeline.py verdict <id> KEEP|HOLD|DQ --reason "..." [--question "..."]
-#        python3 -I tools/pipeline.py status <id> <status> --why "..."
+#        python3 -I tools/pipeline.py apply-verdicts <file.json>       the screener's verdicts (and banned checks)
+#        python3 -I tools/pipeline.py status <id> [<id> ...] <status> --why "..."
 #        python3 -I tools/pipeline.py set <id> key=value ... --why "..."  (application fields: clean_pass, unconfirmed, jev_id)
 #        python3 -I tools/pipeline.py list [--status S] [--source S] [--json]
 #        python3 -I tools/pipeline.py show <id>
@@ -212,7 +213,20 @@ def main():
     elif a.cmd == 'import': import_roles(a.args)
     elif a.cmd == 'import-emails': import_emails(a.args[0])
     elif a.cmd == 'verdict': verdict(c, a.args[0], a.args[1], a.reason, a.question); c.commit(); print(f'{a.args[0]}: {a.args[1].upper()}')
-    elif a.cmd == 'status': set_status(c, a.args[0], a.args[1], a.why); c.commit(); print(f'{a.args[0]}: {a.args[1]}')
+    elif a.cmd == 'apply-verdicts':
+        # The screener's file: [{"id", "verdict", "reason", "question", "banned_check": {"s1","s2","s3","verdict","evidence"}}]
+        import banned
+        for v in K.load_json(a.args[0], []):
+            try:
+                r = c.execute('select company from roles where id = ?', (v.get('id'),)).fetchone()
+                bc = v.get('banned_check')
+                if bc and r: banned.record(r['company'], bc.get('s1', ''), bc.get('s2', ''), bc.get('s3', ''), bc.get('verdict', ''), bc.get('evidence', ''))
+                verdict(c, v['id'], v['verdict'], v.get('reason', ''), v.get('question', '')); print(f"{v['id']}: {v['verdict'].upper()}")
+            except (SystemExit, KeyError) as e: print(f"{v.get('id')}: not recorded: {e}")
+        c.commit()
+    elif a.cmd == 'status':
+        for rid in a.args[:-1]: set_status(c, rid, a.args[-1], a.why); print(f'{rid}: {a.args[-1]}')
+        c.commit()
     elif a.cmd == 'set': set_fields(c, a.args[0], a.args[1:], a.why); c.commit(); print('ok')
     elif a.cmd == 'list':
         q, p = 'select * from roles where 1=1', []

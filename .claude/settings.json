@@ -23,7 +23,10 @@
       "Bash(test -e *)",
       "mcp__nuworks__nuworks_status",
       "mcp__nuworks__nuworks_search",
-      "mcp__nuworks__nuworks_get_posting"
+      "mcp__nuworks__nuworks_get_posting",
+      "Bash(COOP_STATE=demo python3 -I tools/*)",
+      "Bash(COOP_STATE=demo COOP_JEV=mock python3 -I tools/*)",
+      "Read(demo/**)"
     ],
     "deny": [
       "Bash(npx jev submit*)",
@@ -38,7 +41,10 @@
       {
         "matcher": "*",
         "hooks": [
-          { "type": "command", "command": "python3 -I \"$CLAUDE_PROJECT_DIR/tools/guard.py\"" }
+          {
+            "type": "command",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/tools/guard.py\""
+          }
         ]
       }
     ]

@@ -10,7 +10,7 @@ import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.abspath(os.environ.get('COOP_STATE') or ROOT)
-STOPS = (f'{STATE}/STOP', os.path.expanduser('~/STOP-AGENTS'))
+STOPS = (f'{STATE}/STOP', f'{ROOT}/STOP', f'{ROOT}/demo/STOP', os.path.expanduser('~/STOP-AGENTS'))
 READ_ONLY = {'Read', 'Glob', 'Grep', 'LS', 'TodoWrite', 'TaskList', 'TaskGet'}
 
 BASH_RULES = [

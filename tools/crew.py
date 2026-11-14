@@ -24,7 +24,7 @@ SAMPLE = f'{ROOT}/templates/sample-student'
 
 # ---- kill switch: one file stops every job. ~/STOP-AGENTS (the kit's switch) is honoured too. ----
 STOPFILE = f'{STATE}/STOP'
-STOPFILES = (STOPFILE, os.path.expanduser('~/STOP-AGENTS'))
+STOPFILES = tuple(dict.fromkeys((STOPFILE, f'{ROOT}/STOP', os.path.expanduser('~/STOP-AGENTS'))))  # the repo's STOP always counts
 def stopped(): return any(os.path.exists(p) for p in STOPFILES)
 def exit_if_stopped(what='this job'):
     if stopped():
