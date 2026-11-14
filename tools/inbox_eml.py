@@ -7,7 +7,8 @@ import datetime as dt, email, email.policy, email.utils, glob, html, json, os, r
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crew as K, pipeline as P
 
-INVITE = re.compile(r'\b(interview|phone screen|screening call|schedule (a|some) time|calendly|book a (time|slot)|availability for a (call|chat)|next round|onsite|super ?day)\b', re.I)
+INVITE = re.compile(r'\b(interview|phone screen|screening call|schedule (a|some) time|calendly|book a (time|slot)|availability for a (call|chat)|next round|onsite|super ?day|'
+                    r'(can|could|would) you (talk|chat|meet|hop on)|(quick|short|brief) (call|chat)|set up a (call|time|chat))\b', re.I)
 ASK = re.compile(r'\?|\bplease (send|share|confirm|complete|let us know|reply)|\bcould you\b|\bcan you\b|\bwould you\b', re.I)
 AUTO = re.compile(r'no-?reply|do not reply|automatic reply|auto-?reply|out of (the )?office|unsubscribe|newsletter', re.I)
 DEADLINE = re.compile(r'(?:by|before|deadline|due|no later than|until)\s+(?:\w+day,?\s+)?((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+20\d\d)?|\d{1,2}/\d{1,2}(?:/20\d\d)?)', re.I)

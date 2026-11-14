@@ -36,7 +36,10 @@ expected present current today now team role
 
 def corpus_for(role_id=None):
     """All text a claim may come from: facts.md, the settings, and for a role its posting and brief."""
-    parts = [K.read(K.FACTS_FILE), json.dumps(S, ensure_ascii=False)]
+    # The student-facing settings only (not limits, windows or other numbers a sentence could pick up by accident).
+    mine = {k: S.get(k) for k in ('student', 'program', 'coop', 'work_auth')}
+    mine['targets'] = {k: S['targets'].get(k) for k in ('titles', 'industries', 'cities')}
+    parts = [K.read(K.FACTS_FILE), json.dumps(mine, ensure_ascii=False)]
     if role_id:
         for f in ('posting.md', 'brief.md', 'person.md'):
             parts.append(K.read(f'{K.OUT}/{role_id}/{f}'))

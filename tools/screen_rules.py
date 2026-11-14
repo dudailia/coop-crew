@@ -72,6 +72,7 @@ def judge(r, text, offline=False):
     return None, '', ''
 
 def run(offline=False, limit=None):
+    K.exit_if_stopped('the screener rules')
     c = P.db(); n = {'KEEP': 0, 'HOLD': 0, 'DQ': 0, 'left': 0}
     rows = c.execute("select * from roles where status = 'new' order by found_at").fetchall()
     for r in rows[:limit] if limit else rows:
