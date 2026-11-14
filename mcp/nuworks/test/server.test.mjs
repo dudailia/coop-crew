@@ -27,7 +27,7 @@ const ENABLED = { mode: 'nuworks+external', nuworks: { enabled: true } };
 async function connect(dir, extraEnv = {}) {
   const transport = new StdioClientTransport({
     command: process.execPath, args: [SERVER], stderr: 'ignore',
-    env: { ...process.env, COOP_STATE: dir, NUWORKS_BASE_URL: fx.base, NUWORKS_DELAY_MS: '10', NUWORKS_TEST_SIGNED_IN: '1',
+    env: { ...process.env, COOP_STATE: dir, NUWORKS_BASE_URL: fx.base, NUWORKS_DELAY_MS: '10', NUWORKS_OPEN_CMD: 'true', NUWORKS_TEST_SIGNED_IN: '1',
       NUWORKS_DRY_OPEN: '1', ...extraEnv },
   });
   const client = new Client({ name: 'nuworks-test', version: '0.0.0' });

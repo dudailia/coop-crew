@@ -225,6 +225,10 @@ class Lock:
     """with Lock('mail'): ...  Holds logs/night.lock. Raises RuntimeError if another Mail or browser job holds it."""
     def __init__(self, who, wait=False): self.who, self.wait = who, wait
     def __enter__(self):
+        busy = f'{LOGS}/nuworks.busy'  # the NUworks server (Node) marks its open browser here
+        if os.path.exists(busy):
+            try: os.kill(int(open(busy).read().strip() or 0), 0); raise RuntimeError('the NUworks reader has a browser open; try again when it ends')
+            except (ProcessLookupError, ValueError): os.remove(busy)
         self.f = open(f'{LOGS}/night.lock', 'a+')
         try: fcntl.flock(self.f, fcntl.LOCK_EX | (0 if self.wait else fcntl.LOCK_NB))
         except OSError:

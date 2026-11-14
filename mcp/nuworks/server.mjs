@@ -30,7 +30,8 @@ const CACHE_DIR = path.join(NU_DIR, 'cache');
 const SESSION_FILE = path.join(NU_DIR, 'session.json');
 const SETTINGS_FILE = path.join(STATE, 'profile', 'settings.json');
 const LOG_FILE = path.join(STATE, 'logs', 'nuworks.log');
-const STOP_FILES = [path.join(STATE, 'STOP'), path.join(os.homedir(), 'STOP-AGENTS')];
+const STOP_FILES = [...new Set([path.join(STATE, 'STOP'), path.join(ROOT, 'STOP'), path.join(os.homedir(), 'STOP-AGENTS')])];
+const BUSY_FILE = path.join(STATE, 'logs', 'nuworks.busy'); // the Python tools' lock waits while a NUworks browser is open
 
 const BASE = new URL(process.env.NUWORKS_BASE_URL || 'https://northeastern-csm.symplicity.com/students/');
 const BASE_HOST = BASE.host;
@@ -93,7 +94,11 @@ async function politeWait() {
 }
 
 async function withBrowser(fn, { headless = true } = {}) {
-  const ctx = await chromium.launchPersistentContext(PROFILE_DIR, { headless, viewport: { width: 1280, height: 900 } });
+  fs.mkdirSync(path.dirname(BUSY_FILE), { recursive: true });
+  fs.writeFileSync(BUSY_FILE, String(process.pid));
+  let ctx;
+  try { ctx = await chromium.launchPersistentContext(PROFILE_DIR, { headless, viewport: { width: 1280, height: 900 } }); }
+  catch (e) { fs.rmSync(BUSY_FILE, { force: true }); throw e; }
   try {
     if (headless) {
       await ctx.route('**/*', (route) => {
@@ -114,6 +119,7 @@ async function withBrowser(fn, { headless = true } = {}) {
     const page = ctx.pages()[0] || await ctx.newPage();
     return await fn(page, ctx);
   } finally {
+    fs.rmSync(BUSY_FILE, { force: true });
     await ctx.close().catch(() => {});
   }
 }
@@ -284,7 +290,7 @@ server.registerTool('nuworks_open', {
   if (new URL(url).host !== BASE_HOST) return refuse(`refused: ${url} is not on NUworks`);
   if (DRY_OPEN) return text({ opened: false, url, note: 'dry run' });
   const isWsl = process.platform === 'linux' && /microsoft/i.test((() => { try { return fs.readFileSync('/proc/version', 'utf8'); } catch { return ''; } })());
-  const cmd = process.platform === 'darwin' ? 'open' : isWsl ? 'wslview' : process.platform === 'win32' ? 'explorer' : 'xdg-open';
+  const cmd = process.env.NUWORKS_OPEN_CMD || (process.platform === 'darwin' ? 'open' : isWsl ? 'wslview' : process.platform === 'win32' ? 'explorer' : 'xdg-open');
   try { spawn(cmd, [url], { detached: true, stdio: 'ignore' }).unref(); }
   catch (e) { return text({ opened: false, url, note: `could not start ${cmd}: ${e.message}; open the URL yourself` }, true); }
   return text({ opened: true, url, note: 'Opened in your browser. Apply there yourself.' });
