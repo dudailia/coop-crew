@@ -191,6 +191,12 @@ def check_all():
 if __name__ == '__main__':
     a = sys.argv
     role = a[a.index('--role') + 1] if '--role' in a else None
+    if '--drafts' in a:  # an outreach drafts file, before it is planned
+        bad = 0
+        for x in K.load_json(a[a.index('--drafts') + 1], []):
+            e = check_note(x) if (x.get('kind') == 'linkedin' or (x.get('profile_url') and not x.get('to'))) else check_email(dict(x, slot=''))
+            if e: bad += 1; print(f"{str(x.get('id', ''))[:24]:24} {x.get('company', '')[:22]:22} " + '; '.join(e))
+        print('problems:', bad); sys.exit(1 if bad else 0)
     if '--file' in a or '--text' in a:
         if '--file' in a: e = check_file(a[a.index('--file') + 1], role)
         else: e = style(a[a.index('--text') + 1], 'text') + unknown_claims(a[a.index('--text') + 1], role)
