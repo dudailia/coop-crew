@@ -105,13 +105,13 @@ async function withBrowser(fn, { headless = true } = {}) {
         const req = route.request();
         let host = '';
         try { host = new URL(req.url()).host; } catch { /* data: and similar */ }
-        if (req.method() !== 'GET') { blockedRequests++; log(`blocked ${req.method()} ${req.url()}`); return route.abort('blockedbyclient'); }
+        if (req.method() !== 'GET') { blockedRequests++; log(`blocked ${req.method()} ${req.url()}`); return route.fulfill({ status: 204, body: '' }); } // answered locally: never sent, and a 204 keeps the page where it is
         let mainNav = false;
         try { mainNav = req.isNavigationRequest() && req.frame() === req.frame().page().mainFrame(); } catch { /* worker requests */ }
         if (mainNav && host && host !== BASE_HOST) {
           // A redirect to sign-in is let through only so it can be recognised and the run stopped; nothing is done there.
           if (SSO_HOSTS.test(host.split(':')[0])) return route.continue();
-          blockedRequests++; log(`blocked navigation to ${req.url()}`); return route.abort('blockedbyclient');
+          blockedRequests++; log(`blocked navigation to ${req.url()}`); return route.fulfill({ status: 204, body: '' }); // answered locally: never sent, and a 204 keeps the page where it is
         }
         return route.continue();
       });
@@ -119,6 +119,8 @@ async function withBrowser(fn, { headless = true } = {}) {
     const page = ctx.pages()[0] || await ctx.newPage();
     return await fn(page, ctx);
   } finally {
+    // after reading, let in-flight requests reach the route guard (so every blocked attempt is counted) before closing
+    for (const pg of ctx.pages()) await pg.waitForLoadState('networkidle', { timeout: 1500 }).catch(() => {});
     fs.rmSync(BUSY_FILE, { force: true });
     await ctx.close().catch(() => {});
   }
@@ -138,12 +140,14 @@ async function load(page, url) {
     halted = `the page did not load (${String(e.message || e).split('\n')[0]})`;
     return halted;
   }
-  const info = await page.evaluate(() => ({
+  const read = () => page.evaluate(() => ({
     title: document.title,
     text: (document.body && document.body.innerText) || '',
     hasPassword: !!document.querySelector('input[type=password]'),
     hasCaptchaFrame: !!document.querySelector('iframe[src*="recaptcha"], iframe[src*="hcaptcha"], iframe[src*="turnstile"], .g-recaptcha, .h-captcha, #challenge-form'),
-  })).catch(() => ({ title: '', text: '', hasPassword: false, hasCaptchaFrame: false }));
+  }));
+  const info = await read().catch(async () => { await page.waitForLoadState('domcontentloaded').catch(() => {}); return read(); })
+    .catch(() => ({ title: '', text: '', hasPassword: false, hasCaptchaFrame: false }));
   const why = classifyPage({ status, url: page.url(), ...info }, BASE_HOST);
   if (why) { halted = why; log(`run stopped: ${why}`); return why; }
   return null;

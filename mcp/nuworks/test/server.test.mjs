@@ -80,7 +80,7 @@ test('enabled: status, search, posting, cache, open, and no POST ever reaches NU
     assert.deepEqual(f.rows.map((x) => x.posting_id), ['g7h8i9']);
 
     const p = body(await c.callTool({ name: 'nuworks_get_posting', arguments: { id: 'a1b2c3' } }));
-    assert.equal(p.from_cache, false);
+    assert.equal(p.from_cache, false, `get_posting answered: ${JSON.stringify(p).slice(0, 600)}`);
     assert.match(p.description, /weekly reporting/);
     assert.match(p.qualifications, /Python and SQL/);
     assert.match(p.application_instructions, /resume and a cover letter/);
@@ -99,7 +99,7 @@ test('enabled: status, search, posting, cache, open, and no POST ever reaches NU
     await new Promise((res) => setTimeout(res, 300)); // let the page's own POST attempts fire, if any got through
     assert.deepEqual(fx.nonGet(), [], 'no POST or other non-GET request may reach NUworks');
     const st2 = body(await c.callTool({ name: 'nuworks_status', arguments: {} }));
-    assert.ok(st2.blocked_requests >= 1, 'the posting page tried to POST and was blocked');
+    assert.ok(st2.blocked_requests >= 1, `the posting page tried to POST and was blocked (status: ${JSON.stringify(st2).slice(0, 400)})`);
   } finally { await c.close(); }
 });
 
