@@ -4,7 +4,7 @@ SAMPLE STUDENT. Hard rules every agent follows. A role that conflicts with a loc
 the student before anything is built.
 
 ## Commute and office
-- On-site or hybrid only in Boston, New York or San Francisco; remote anywhere in the US.
+- On-site or hybrid only in Boston, New York or the San Francisco Bay Area (San Francisco, San Jose, Mountain View); remote anywhere in the US.
 - At most 4 office days a week.
 
 ## Eligibility
