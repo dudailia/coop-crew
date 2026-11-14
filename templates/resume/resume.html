@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{{NAME}} resume</title>
+<style>
+/* One page, text only, single column. Black and gray, about 10 pt. No tables, icons, header or footer content.
+   Option A header: the name, a thin rule, the posting's exact job title, one centered middot contact line with GitHub. */
+@page { size: Letter; margin: 0.5in 0.6in; }
+* { box-sizing: border-box; }
+body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 10pt; line-height: 1.28; color: #000; margin: 0; }
+h1 { font-size: 18pt; font-weight: 700; text-align: center; margin: 0 0 3pt; letter-spacing: 0.3pt; }
+hr.rule { border: 0; border-top: 0.6pt solid #555; margin: 0 0 3pt; }
+.role { text-align: center; font-size: 10.5pt; font-weight: 600; margin: 0 0 2pt; }
+.contact { text-align: center; font-size: 9.5pt; color: #333; margin: 0 0 6pt; }
+h2 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6pt; color: #000;
+     border-bottom: 0.5pt solid #888; margin: 7pt 0 3pt; padding-bottom: 1pt; }
+.entry { margin: 0 0 3pt; }
+.head { display: flex; justify-content: space-between; gap: 8pt; }
+.head .what { font-weight: 700; }
+.head .when { color: #333; white-space: nowrap; }
+.sub { color: #333; font-style: italic; }
+ul { margin: 1pt 0 2pt; padding-left: 13pt; }
+li { margin: 0 0 1pt; }
+p { margin: 0 0 2pt; }
+</style></head>
+<body>
+<h1>{{NAME}}</h1>
+<hr class="rule">
+<div class="role">{{TITLE}}</div>
+<div class="contact">{{CONTACT}}</div>
+{{BODY}}
+</body></html>

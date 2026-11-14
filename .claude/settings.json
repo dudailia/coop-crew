@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "Write(out/**)",
+      "Edit(out/**)",
+      "Write(data/incoming/**)",
+      "Write(profile/**)",
+      "Edit(profile/**)",
+      "Write(demo/**)",
+      "Edit(demo/**)",
+      "Bash(python3 -I tools/*)",
+      "Bash(python3 tools/*)",
+      "Bash(node tools/*)",
+      "Bash(sqlite3 -readonly *)",
+      "Bash(pdftotext *)",
+      "Bash(date*)",
+      "Bash(test -e *)",
+      "mcp__nuworks__nuworks_status",
+      "mcp__nuworks__nuworks_search",
+      "mcp__nuworks__nuworks_get_posting"
+    ],
+    "deny": [
+      "Bash(npx jev submit*)",
+      "Bash(osascript*)",
+      "WebFetch(domain:linkedin.com)",
+      "WebFetch(domain:www.linkedin.com)",
+      "WebFetch(domain:northeastern-csm.symplicity.com)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "python3 -I \"$CLAUDE_PROJECT_DIR/tools/guard.py\"" }
+        ]
+      }
+    ]
+  }
+}

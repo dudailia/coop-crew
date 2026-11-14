@@ -1,0 +1,18 @@
+{
+  "name": "coop-crew",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A multi-agent co-op and internship search crew for students, built on Claude Code.",
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test:nuworks": "node --test mcp/nuworks/test/server.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "pdf-lib": "^1.17.1",
+    "playwright": "1.63.0",
+    "zod": "^3.25.76"
+  }
+}

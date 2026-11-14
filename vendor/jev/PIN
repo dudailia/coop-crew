@@ -1,0 +1,4 @@
+repo=https://github.com/qbeka/jev-job-search.git
+commit=4442778
+release=1.7.0
+patch=jev-fixes.patch

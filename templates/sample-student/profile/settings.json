@@ -1,0 +1,154 @@
+{
+  "_help": "The bundled SAMPLE student. Every detail is made up. /demo and the tests use this profile; /setup writes your own.",
+  "student": {
+    "name": "Avery Example",
+    "first_name": "Avery",
+    "email": "avery.example@example.com",
+    "phone": "(617) 555-0142",
+    "city": "Boston, MA",
+    "linkedin": "linkedin.com/in/example",
+    "github": "github.com/example",
+    "portfolio": ""
+  },
+  "program": {
+    "college": "Northeastern University",
+    "major": "Computer Science and Business Administration",
+    "concentration": "Fintech",
+    "minor": "",
+    "year": "third year",
+    "graduation": "May 2028",
+    "gpa": "3.6",
+    "show_gpa": true
+  },
+  "coop": {
+    "number": "2nd",
+    "cycle": "spring",
+    "length_months": 6,
+    "start": "2027-01-04",
+    "end": "2027-06-25",
+    "summer_extension": false,
+    "recruitment_term": true,
+    "availability": "I am available for a six-month co-op from January to June 2027."
+  },
+  "mode": "external",
+  "work_auth": {
+    "US": {
+      "status": "US citizen",
+      "sentence": "I am a US citizen and do not need visa sponsorship, now or in the future.",
+      "include_in_email": false,
+      "sponsorship_now": "No",
+      "sponsorship_later": "No",
+      "visa_type": "",
+      "visa_type_names": [],
+      "never_visa_types": []
+    }
+  },
+  "targets": {
+    "titles": [
+      "Software Engineer Intern",
+      "Software Engineering Co-op",
+      "Data Science Intern",
+      "Machine Learning Co-op",
+      "Data Analyst Intern"
+    ],
+    "title_regex": "\\bco-?op\\b|\\bintern(ship)?s?\\b",
+    "exclude_regex": "ph\\.?d|mba|senior|staff|principal",
+    "industries": [
+      "AI",
+      "developer tools",
+      "data infrastructure",
+      "fintech"
+    ],
+    "company_size": [
+      "startup",
+      "scale-up",
+      "large"
+    ],
+    "cities": [
+      "Boston",
+      "New York",
+      "San Francisco",
+      "Remote"
+    ],
+    "work_style": [
+      "on-site",
+      "hybrid",
+      "remote"
+    ],
+    "pay_floor_hourly": 25
+  },
+  "limits": {
+    "applications_per_day": 5,
+    "emails_per_day": 10,
+    "quiet_hours": [
+      "22:00",
+      "07:00"
+    ],
+    "schedule": false
+  },
+  "timezone": "America/New_York",
+  "regions": {
+    "Boston": {
+      "tz": "America/New_York",
+      "window": [
+        "08:00",
+        "08:50"
+      ],
+      "country": "US"
+    },
+    "New York": {
+      "tz": "America/New_York",
+      "window": [
+        "08:00",
+        "08:50"
+      ],
+      "country": "US"
+    },
+    "San Francisco": {
+      "tz": "America/Los_Angeles",
+      "window": [
+        "08:00",
+        "08:50"
+      ],
+      "country": "US"
+    }
+  },
+  "send": {
+    "mode": "prepare",
+    "gap_minutes": 4,
+    "per_run": 3,
+    "follow_up_working_days": 6,
+    "late_minutes": 50
+  },
+  "mail": {
+    "adapter": "eml",
+    "account": "",
+    "from": ""
+  },
+  "writing": {
+    "max_words": 170,
+    "spelling": "US",
+    "sign_off": "Best,",
+    "opt_out_line": "If this isn't relevant, just let me know and I won't follow up.",
+    "banned": [
+      "passionate",
+      "excited",
+      "thrilled",
+      "cutting[- ]edge",
+      "world[- ]class",
+      "leverag",
+      "synerg",
+      "seamless",
+      "robust",
+      "game[- ]chang",
+      "to whom it may concern",
+      "—"
+    ],
+    "salutation_regex": "^(Hi|Hello|Dear) [A-Z][\\w'’-]+,$",
+    "linkedin_note_max": 300,
+    "followup_max_lines": 2
+  },
+  "nuworks": {
+    "enabled": false
+  }
+}

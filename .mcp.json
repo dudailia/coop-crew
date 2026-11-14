@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "nuworks": {
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR:-.}/mcp/nuworks/server.mjs"],
+      "env": {}
+    }
+  }
+}

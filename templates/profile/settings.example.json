@@ -1,0 +1,65 @@
+{
+  "_help": "The onboarder (/setup) writes profile/settings.json from your answers. Keys starting with _ are ignored. Every tool reads this file; nothing personal is written in the code. Check it with: python3 -I tools/crew.py --check",
+
+  "student": {
+    "name": "", "first_name": "", "email": "", "phone": "", "city": "",
+    "linkedin": "", "github": "", "portfolio": ""
+  },
+
+  "program": {
+    "college": "", "major": "", "concentration": "", "minor": "", "year": "",
+    "graduation": "", "gpa": "", "show_gpa": false
+  },
+
+  "_coop": "number: 1st, 2nd or 3rd co-op. cycle: spring or fall. start/end: YYYY-MM-DD. availability: the exact sentence every email and form uses for dates. recruitment_term: true while you are in your NUworks recruitment term.",
+  "coop": {
+    "number": "", "cycle": "", "length_months": 6, "start": "", "end": "",
+    "summer_extension": false, "recruitment_term": false, "availability": ""
+  },
+
+  "_mode": "nuworks+external, external, or self-developed. self-developed turns on the banned-list check (profile/banned-employers.md) and keeps NUworks employers out.",
+  "mode": "external",
+
+  "_work_auth": "One entry per country you target. sentence is used word for word in forms and (with include_in_email) emails. visa_type and never_visa_types drive the form answer gate (for example F-1 CPT, never H-1B).",
+  "work_auth": {
+    "US": {
+      "status": "", "sentence": "", "include_in_email": false,
+      "sponsorship_now": "", "sponsorship_later": "",
+      "visa_type": "", "visa_type_names": [], "never_visa_types": []
+    }
+  },
+
+  "_targets": "title_regex and exclude_regex are case-insensitive regular expressions on job titles. pay_floor_hourly in USD.",
+  "targets": {
+    "titles": [], "title_regex": "\\bco-?op\\b|\\bintern(ship)?s?\\b", "exclude_regex": "ph\\.?d|senior|staff|principal",
+    "industries": [], "company_size": [], "cities": [], "work_style": ["on-site", "hybrid", "remote"], "pay_floor_hourly": 0
+  },
+
+  "_limits": "Defaults: 5 applications and 10 emails a day. Emails have a hard maximum of 40 a day whatever is written here.",
+  "limits": { "applications_per_day": 5, "emails_per_day": 10, "quiet_hours": ["22:00", "07:00"], "schedule": false },
+
+  "timezone": "America/New_York",
+  "_regions": "Every email names one region: its time zone, the recipient-local send window, and its country (for the work-authorization sentence).",
+  "regions": {
+    "Boston": { "tz": "America/New_York", "window": ["08:00", "08:50"], "country": "US" },
+    "New York": { "tz": "America/New_York", "window": ["08:00", "08:50"], "country": "US" },
+    "San Francisco": { "tz": "America/Los_Angeles", "window": ["08:00", "08:50"], "country": "US" }
+  },
+
+  "send": { "_mode": "prepare = approved emails are saved as drafts you send yourself (default). send = approved emails are sent (macOS Mail only).",
+            "mode": "prepare", "gap_minutes": 4, "per_run": 3, "follow_up_working_days": 6, "late_minutes": 50 },
+
+  "_mail": "adapter: auto (Mail on a Mac with an account, else .eml drafts), mac-mail, or eml. account: the name Mail shows under Settings > Accounts.",
+  "mail": { "adapter": "auto", "account": "", "from": "", "inbox": "Inbox", "drafts": "Drafts" },
+
+  "writing": {
+    "max_words": 170, "spelling": "US", "sign_off": "Best,",
+    "opt_out_line": "If this isn't relevant, just let me know and I won't follow up.",
+    "banned": ["passionate", "excited", "thrilled", "cutting[- ]edge", "world[- ]class", "leverag", "synerg", "seamless", "robust", "game[- ]chang", "to whom it may concern", "—"],
+    "salutation_regex": "^(Hi|Hello|Dear) [A-Z][\\w'’-]+,$",
+    "linkedin_note_max": 300, "followup_max_lines": 2
+  },
+
+  "_nuworks": "Off until the co-op office's written OK (mcp/nuworks/APPROVAL.md) and your own choice in /setup.",
+  "nuworks": { "enabled": false }
+}

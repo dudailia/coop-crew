@@ -1,0 +1,26 @@
+# Everything about the student stays on their machine and is never committed.
+/profile/
+/assets/
+/data/
+/out/
+/logs/
+/demo/
+/STOP
+/TODAY.html
+/TODAY-all.html
+/MORNING.md
+/needs-reply.html
+/tracker.html
+/needs-me.md
+/APPROVE.txt
+.claude/settings.local.json
+.env
+.env.*
+
+# installed or fetched on the student's machine
+node_modules/
+vendor/jev/src/
+.claude/skills/anti-slop/references/
+__pycache__/
+*.pyc
+.DS_Store
