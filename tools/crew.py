@@ -82,7 +82,9 @@ def load_settings(path=None):
     return _merge(DEFAULTS, {k: v for k, v in raw.items() if not k.startswith('_')})
 
 S = load_settings()
-C = dict(S['student'], availability=S['coop'].get('availability', ''), program='co-op')  # kit name: the candidate
+C = dict(S['student'], availability=S['coop'].get('availability', ''), program='co-op',  # kit name: the candidate
+         situation=f"a {S['program'].get('major') or 'university'} student at {S['program'].get('college') or 'university'} "
+                   f"looking for a {S['coop'].get('cycle') or ''} co-op {S['coop'].get('availability') or ''}".replace('  ', ' ').strip())
 W = S['writing']
 try: TZ = zoneinfo.ZoneInfo(S['timezone'])
 except Exception: TZ = zoneinfo.ZoneInfo('America/New_York')
