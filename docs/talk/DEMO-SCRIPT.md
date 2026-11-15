@@ -1,7 +1,7 @@
 # Demo script: two minutes
 
-What the room sees: `docs/talk/demo.mp4` (84 seconds, no sound, captions on screen), recorded by
-`tools/record_demo.sh` from a real `/demo` run on the made-up sample student, Avery Example. You talk over it. Have it
+What the room sees: `docs/talk/demo.mp4` (84 seconds, no sound, captions on screen; not in git: download it from the
+release into `docs/talk/`, or record it), recorded by `tools/record_demo.sh` from a real `/demo` run on the made-up sample student, Avery Example. You talk over it. Have it
 open in a second tab before the talk, and the deck on slide 4 ("one night") when you start.
 
 Timings below follow the video. Spoken text is a guide, not a script to read; about 280 words in two minutes.

@@ -89,8 +89,8 @@ More in [SECURITY.md](SECURITY.md).
 
 ## Talk materials
 
-[docs/talk/](docs/talk/): the slide deck (`slides.html`, offline, arrow keys), a recorded demo (`demo.mp4`,
-`tools/record_demo.sh`), the spoken demo script with a no-Wi-Fi plan, and the attendee pre-install note.
+[docs/talk/](docs/talk/): the slide deck (`slides.html`, offline, arrow keys), a recorded demo (`demo.mp4`, attached to the
+[latest release](https://github.com/dudailia/coop-crew/releases/latest), not in git; `tools/record_demo.sh` records it), the spoken demo script with a no-Wi-Fi plan, and the attendee pre-install note.
 
 ## Tests
 

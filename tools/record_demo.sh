@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Runs /demo on the made-up sample student, then records a 60 to 90 second screen video of the result pages
-# (TODAY.html, the review pack, the one-page resume, the tracker) and saves it as docs/talk/demo.mp4.
+# (TODAY.html, the review pack, the one-page resume, the tracker) and saves it as docs/talk/demo.mp4
+# (gitignored: attach it to the GitHub release).
 #   tools/record_demo.sh             live /demo through Claude Code (`claude -p "/demo"`, about 4 minutes, your plan)
 #   tools/record_demo.sh --offline   the demo without agents (tools/demo.py run --offline), for no Claude access or Wi-Fi
 #   tools/record_demo.sh --no-run    record the demo/ pages already there

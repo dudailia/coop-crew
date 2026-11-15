@@ -41,26 +41,26 @@ video shows only the bundled, made-up sample student.
    - It is built by `tools/build_slides.py` from `docs/talk/slides.tpl.html`. The QR code (`tools/qr_svg.py`, standard
      library) and the screenshots are inlined.
    - The results slide counts the tests from the test files at build time, so it never claims more than the repo has.
-3. **Demo recording: `tools/record_demo.sh` → `docs/talk/demo.mp4`** (commit `394eb4e`). It runs the live `/demo` (or
+3. **Demo recording: `tools/record_demo.sh` → `docs/talk/demo.mp4`** (commit `2974fe4`). It runs the live `/demo` (or
    `--offline`, or `--no-run`), then records TODAY.html, the review pack, the resume and the tracker with on-screen
    captions, then converts to MP4 with ffmpeg.
    - `demo.py` gained `COOP_DEMO_SAMPLE=1`, so a recording always uses the sample student, never a real profile, and
      `COOP_DEMO_NO_OPEN=1`.
    - I watched the frames and fixed two bugs (the HOLD card was taken for the review pack; collapsed sections) before
      the final take.
-4. **Demo script: `docs/talk/DEMO-SCRIPT.md`** (commit `1cc0513`). Two minutes over the video, keyed to its timestamps,
+4. **Demo script: `docs/talk/DEMO-SCRIPT.md`** (commit `a5a1226`). Two minutes over the video, keyed to its timestamps,
    with five fallbacks:
    - the video from disk;
    - the offline demo, which needs no network and no Claude;
    - pre-running `/demo`;
    - a PDF of the deck;
    - the kill switch.
-5. **Attendee note: `docs/talk/BEFORE-THE-TALK.md`** (commit `5196eb2`). What to install the day before, how to check
+5. **Attendee note: `docs/talk/BEFORE-THE-TALK.md`** (commit `2fbb9ff`). What to install the day before, how to check
    it (`/crew-doctor`, `/demo`, the offline demo), and 13 common errors with fixes, taken from the installer's real
    messages.
-6. **README** (commit `fba76db`): a three-line pitch, a fresh TODAY.html screenshot from tonight's demo, the install
+6. **README** (commit `333ac3a`): a three-line pitch, a fresh TODAY.html screenshot from tonight's demo, the install
    line, "how it works" with a simpler agent diagram, the commands, safety, links to the talk materials.
-7. **Checks and this report.** One fix was needed (commit `b15750b`): the personal-data scan read `demo.mp4`'s bytes
+7. **Checks and this report.** One fix was needed (commit `d054439`): the personal-data scan read `demo.mp4`'s bytes
    as text and matched noise, two "emails" and a private pattern case-insensitively. Video now joins the images and
    PDFs the scanner already skips. I also added a structural test for the QR encoder.
 
@@ -75,9 +75,9 @@ video shows only the bundled, made-up sample student.
    - The "one night" times are an example; only the 06:30 run is real (the optional schedule).
    - Slide 7 quotes Symplicity's terms (the regional text; the US page is still to be read by hand, as noted in
      APPROVAL.md).
-4. **`docs/talk/demo.mp4` (3.4 MB) is committed to git history.** If you would rather ship it as a release asset or
-   with Git LFS, change that before publishing. Re-recording replaces it: `tools/record_demo.sh` (about 4 minutes,
-   uses your Claude plan) or `--offline`.
+4. **`docs/talk/demo.mp4` (3.4 MB).** Done on 15 November: removed from all of git history (commit hashes above are
+   the rewritten ones), kept locally and gitignored; attach it to the GitHub release. Re-recording replaces it:
+   `tools/record_demo.sh` (about 4 minutes, uses your Claude plan) or `--offline`.
 5. **Deviations from the slide skill's defaults.**
    - System fonts (Iowan Old Style, Avenir Next, SF Mono, all on macOS) instead of web fonts, so the deck works with no
      Wi-Fi. Other systems fall back to similar faces.
