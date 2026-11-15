@@ -289,6 +289,42 @@ class Guard_RulesInCode(unittest.TestCase):
                     'git diff tools/approve.py', 'grep -rn "symplicity.com" mcp/nuworks', 'grep -n linkedin.com profile/settings.json'):
             self.assertEqual(self.guard('Bash', {'command': cmd}), 0, cmd)
 
+    def test_narrowed_rules_keep_every_real_block(self):
+        # APPROVE.txt: any write is blocked
+        for cmd in ('echo r1 >> APPROVE.txt', 'printf "r1\\n" > APPROVE.txt', 'echo r1 >APPROVE.txt', 'echo r1 | tee -a APPROVE.txt',
+                    'cp /tmp/x APPROVE.txt', 'mv /tmp/x ./APPROVE.txt', 'rm APPROVE.txt', 'touch APPROVE.txt', 'sh -c "echo r1 >>APPROVE.txt"',
+                    'python3 -c "open(\'APPROVE.txt\', \'a\').write(\'r1\')"', 'echo r1 | dd of=APPROVE.txt', "sed -i '' 's/a/b/' APPROVE.txt",
+                    "perl -pi -e 's/a/b/' APPROVE.txt", 'node -e "require(\'fs\').appendFileSync(\'APPROVE.txt\', \'r1\')"',
+                    'cat /tmp/ids >> /x/coop-crew/APPROVE.txt', 'exec 3>APPROVE.txt'):
+            self.assertEqual(self.guard('Bash', {'command': cmd}), 2, cmd)
+        # sqlite: any write, the pipeline opened without -readonly, Python's sqlite3 writing
+        for cmd in ('sqlite3 data/pipeline.sqlite "select * from approvals"', 'sqlite3 -readonly data/pipeline.sqlite "delete from approvals"',
+                    'sqlite3 data/pipeline.sqlite', 'echo "delete from approvals" | sqlite3 data/pipeline.sqlite',
+                    'sqlite3 -readonly data/pipeline.sqlite "select 1; update roles set status = \'approved\'"',
+                    "sqlite3 /tmp/x.db \"attach 'data/pipeline.sqlite' as p; insert into p.approvals values (1)\"",
+                    'python3 -c "import sqlite3; c = sqlite3.connect(\'data/pipeline.sqlite\'); c.execute(\'delete from approvals\'); c.commit()"',
+                    'sqlite3 -readonly data/pipeline.sqlite ".restore /tmp/x.db"'):
+            self.assertEqual(self.guard('Bash', {'command': cmd}), 2, cmd)
+        # NUworks / LinkedIn fetches, wherever the URL sits
+        for cmd in ('open https://northeastern-csm.symplicity.com/students/', 'curl -s symplicity.com/support/terms-of-use',
+                    'python3 -c "import webbrowser; webbrowser.open(\'https://x.symplicity.com/a\')"',
+                    'node -e "fetch(\'https://x.symplicity.com/a\').then(r => r.text())"',
+                    'python3 -c "import requests; requests.get(\'https://x.symplicity.com/a\')"',
+                    'U=https://nuworks.example.edu/jobs; curl "$U"', 'echo hi; open "https://www.linkedin.com/in/x"'):
+            self.assertEqual(self.guard('Bash', {'command': cmd}), 2, cmd)
+
+    def test_narrowed_rules_allow_reads_and_prose(self):
+        for cmd in ('cat APPROVE.txt', 'ls -la APPROVE.txt', 'test -e APPROVE.txt', 'wc -l APPROVE.txt', 'grep -c . APPROVE.txt',
+                    'cat APPROVE.txt > /tmp/approve-copy.txt', 'ls -1 | grep -E "^(TODAY|APPROVE)"',
+                    'sqlite3 -readonly data/pipeline.sqlite "select count(*) from approvals"',
+                    'sqlite3 -readonly data/pipeline.sqlite "select id, updated_at, status from roles"',
+                    'python3 -c "import sqlite3; print(sqlite3.connect(\'file:data/pipeline.sqlite?mode=ro\', uri=True).execute(\'select 1\').fetchone())"',
+                    "python3 - <<'EOF'\ns = open('README.md').read()\ns = s.replace('x', 'see https://www.symplicity.com/support/terms-of-use')\nopen('README.md', 'w').write(s)\nEOF",
+                    'git commit -m "catch fetches whose URL comes before curl; NUworks default path"',
+                    'grep -rn "fetch" mcp/nuworks/server.mjs', 'echo "requests and chromium are mentioned in symplicity docs"',
+                    'grep -rn "symplicity.com" docs'):
+            self.assertEqual(self.guard('Bash', {'command': cmd}), 0, cmd)
+
     def test_every_write_rule_has_an_edit_rule(self):
         # Claude Code checks the Write tool against Edit(...) rules: a Write(...) rule alone is not applied, and a headless
         # /run then cannot hand off through data/incoming/ (found in the live acceptance run, 2026-11-14)

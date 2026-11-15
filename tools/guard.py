@@ -13,7 +13,23 @@ STATE = os.path.abspath(os.environ.get('COOP_STATE') or ROOT)
 STOPS = (f'{STATE}/STOP', f'{ROOT}/STOP', f'{ROOT}/demo/STOP', os.path.expanduser('~/STOP-AGENTS'))
 READ_ONLY = {'Read', 'Glob', 'Grep', 'LS', 'TodoWrite', 'TaskList', 'TaskGet'}
 
-FETCH = r'\b(curl|wget|urllib|urlopen|requests|httpx|aiohttp|fetch|lynx|w3m|playwright|chromium|open)\b'
+# Something that loads a URL. Narrow on purpose: Python's open(...), the word "fetch" in prose, or a heredoc that edits a
+# file mentioning a site are not fetches. `open` counts only as the macOS command (open <url>).
+FETCH = (r'(?:\b(curl|wget|urllib|urlopen|httpx|aiohttp|lynx|w3m|playwright|chromium|puppeteer|webbrowser)\b'
+         r'|\brequests\.(get|post|head|put|request|Session)\b|\bfetch\(|(^|[;&|(`]|\$\()\s*open\s)')
+# Writing APPROVE.txt in any way (reading it, listing it or testing that it exists is fine): a redirect into it, tee, a
+# file-changing command, dd of=, an editor, or any interpreter that names it.
+APPROVE_WRITE = (r'>{1,2}\|?\s*["\']?[\w./~-]*APPROVE\.txt'
+                 r'|\b(tee|cp|mv|ln|install|rsync|rm|truncate|touch|chmod|chown|ed|ex|vi|vim|nano|emacs)\b[^|;&]*APPROVE\.txt'
+                 r'|\bsed\b[^|;&]*\s-i[^|;&]*APPROVE\.txt|\bperl\b[^|;&]*\s-[a-z]*i[^|;&]*APPROVE\.txt|\bof=\S*APPROVE\.txt'
+                 r'|\b(python[\d.]*|pypy[\d.]*|node|ruby|php|osascript|awk|gawk)\b[^|;&]*APPROVE\.txt')
+# Changing the pipeline with sqlite: a write statement, the pipeline opened without -readonly, or Python's sqlite3 module
+# writing. `sqlite3 -readonly data/pipeline.sqlite "select ... from approvals"` is a read and is allowed.
+SQLITE_WRITE = (r'(?s)('
+                r'\bsqlite3?\b[^|&]*\b(insert|update|delete|drop|replace|create|alter|attach|detach|vacuum|reindex)\b'
+                r'|\bsqlite3?\b[^|&]*\.(import|restore|load|clone)\b'
+                r'|(^|[;&|(`]|\$\()\s*(\w+=\S*\s+)*sqlite3(?=\s|$)(?![^|;&]*\s-readonly\b)[^|;&]*pipeline\.sqlite'
+                r'|\bimport\s+sqlite3\b.*\b(insert|update|delete|drop|replace|approvals|commit)\b)')
 BASH_RULES = [
     (r'\bjev\b[^|;&]*\b(submit|daily|resume\s+--submit)\b|\bjev\b[^|;&]*--submit|--force\b[^|;&]*\bjev\b',
      'jev submits only through tools/applicant.py, which checks the student\'s approval'),
@@ -24,13 +40,13 @@ BASH_RULES = [
      r'|approve\.py\b[^;&]*\|\s*xargs\b'                                                  # piped into xargs
      r'|\bimport\s+approve\b|\bfrom\s+approve\s+import\b|-m\s+approve\b|run_path\([^)]*approve',  # its code, imported
      'only the student approves (/approve or APPROVE.txt); an agent cannot run approve.py'),
-    (r'APPROVE\.txt', 'APPROVE.txt is written by the student only'),
-    (r'sqlite3?\b[^|;&]*(approvals|insert|update|delete|drop)', 'the pipeline changes only through tools/pipeline.py (every change is an event)'),
+    (APPROVE_WRITE, 'APPROVE.txt is written by the student only'),
+    (SQLITE_WRITE, 'the pipeline changes only through tools/pipeline.py (every change is an event); read it with sqlite3 -readonly'),
     (r'send_due\.py[^|;&]*--mark-sent', 'only the student records a hand-sent email'),
     (r'\brm\b[^|;&]*\bSTOP\b|STOP-AGENTS', 'the kill switch is turned off only by the student (/crew-resume)'),
     # a fetcher anywhere in the command plus the site anywhere in it: a URL kept in a variable or a loop list is caught too
     (r'(?s)^(?=.*' + FETCH + r').*linkedin\.com', 'no LinkedIn automation or scraping'),
-    (r'(?s)^((?=.*' + FETCH + r').*symplicity\.com|(?=.*\b(curl|wget)\b).*nuworks)', 'NUworks is read only through the nuworks MCP server'),
+    (r'(?s)^((?=.*' + FETCH + r').*symplicity\.com|(?=.*\b(curl|wget)\b).*https?://[^\s\'"]*nuworks)', 'NUworks is read only through the nuworks MCP server'),
     (r'\bsmtp|sendmail\b|\bmsmtp\b|\bmutt\b', 'no SMTP: email goes only through the student\'s approved drafts'),
 ]
 PATH_RULES = [
