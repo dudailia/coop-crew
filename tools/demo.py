@@ -44,7 +44,8 @@ def prepare(offline=False):
     if stopped(): print('STOP: the kill switch is on. /crew-resume first.'); sys.exit(3)
     t0 = time.time()
     shutil.rmtree(DEMO, ignore_errors=True); os.makedirs(f'{DEMO}/data/incoming')
-    own = os.path.exists(f'{ROOT}/profile/settings.json')
+    # COOP_DEMO_SAMPLE=1 (tools/record_demo.sh) always uses the made-up sample student, so a recording never shows yours
+    own = os.path.exists(f'{ROOT}/profile/settings.json') and os.environ.get('COOP_DEMO_SAMPLE') != '1'
     shutil.copytree(f'{ROOT}/profile' if own else f'{ROOT}/templates/sample-student/profile', f'{DEMO}/profile')
     s = json.load(open(f'{DEMO}/profile/settings.json'))
     s['mail'] = {'adapter': 'mock'}; s['mode'] = 'external' if s.get('mode') != 'self-developed' else s['mode']
@@ -106,7 +107,7 @@ def finish(no_open=False):
         return sum(1 for l in open(p) if json.loads(l)['action'] == act) if os.path.exists(p) else 0
     subs, sends = calls('mock-jev.jsonl', 'submit'), calls('mock-mail.jsonl', 'send') + calls('mock-mail.jsonl', 'draft')
     page = f'{DEMO}/TODAY.html'
-    if not no_open:
+    if not no_open and os.environ.get('COOP_DEMO_NO_OPEN') != '1':
         for opener in (['open'], ['xdg-open'], ['wslview']):
             if shutil.which(opener[0]): subprocess.run(opener + [page], capture_output=True); break
     c = P.db()
