@@ -17,7 +17,9 @@ SECRETS = [(r'sk-ant-[A-Za-z0-9_-]{20,}', 'Anthropic key'), (r'\bsk-[A-Za-z0-9]{
            (r'\bgh[pousr]_[A-Za-z0-9]{30,}', 'GitHub token'), (r'\bAKIA[0-9A-Z]{16}\b', 'AWS key'), (r'\bxox[baprs]-[A-Za-z0-9-]{10,}', 'Slack token'),
            (r'\bAIza[0-9A-Za-z_-]{35}\b', 'Google key'), (r'-----BEGIN (RSA |EC |OPENSSH |)PRIVATE KEY-----', 'private key'),
            (r'(?im)^\s*(ANTHROPIC|OPENAI|OPENROUTER|GITHUB|AWS|SMTP|MAIL)_[A-Z_]*(KEY|TOKEN|PASSWORD|SECRET)\s*=\s*\S{8,}', '.env secret')]
-SKIP = re.compile(r'(^|/)(node_modules|vendor/jev/src|\.git)/|package-lock\.json$|\.(png|jpg|jpeg|gif|pdf|ico|woff2?)$')
+# Binary media are not text: a regex over their bytes only finds noise. What they show (the sample student only, in
+# docs/img and docs/talk) is checked by eye when they are made.
+SKIP = re.compile(r'(^|/)(node_modules|vendor/jev/src|\.git)/|package-lock\.json$|\.(png|jpg|jpeg|gif|pdf|ico|woff2?|mp4|webm|mov|m4a|mp3)$')
 
 def private_patterns(path):
     if not os.path.exists(path): return []

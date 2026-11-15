@@ -486,5 +486,22 @@ class T9_PersonalDataScan(unittest.TestCase):
         for want in (mail, phone, 'Anthropic key', name): self.assertIn(want, r.stdout)
         self.assertNotIn('avery.example', r.stdout); self.assertNotIn('555', r.stdout)
 
+class Talk_QRCode(unittest.TestCase):
+    """tools/qr_svg.py (the deck's QR code). A full decode was checked once with Apple's Vision framework; this checks the
+    structure: size, the three finder patterns, timing, the dark module, and both copies of the format bits agreeing."""
+    def test_structure(self):
+        sys.path.insert(0, TOOLS); import qr_svg
+        g = qr_svg.build('https://github.com/dudailia/coop-crew'); n = len(g)
+        self.assertEqual(n, 29, 'a 36-byte URL at level M is version 3 (29 x 29)')
+        finder = [[max(abs(r - 3), abs(c - 3)) not in (2, 4) for c in range(7)] for r in range(7)]
+        for r0, c0 in ((0, 0), (0, n - 7), (n - 7, 0)):
+            self.assertEqual([row[c0:c0 + 7] for row in g[r0:r0 + 7]], finder)
+        self.assertEqual([g[6][c] for c in range(8, n - 8)], [c % 2 == 0 for c in range(8, n - 8)], 'timing row')
+        self.assertTrue(g[n - 8][8], 'dark module')
+        first = [g[i][8] for i in range(6)] + [g[7][8], g[8][8], g[8][7]] + [g[8][14 - i] for i in range(9, 15)]
+        second = [g[8][n - 1 - i] for i in range(8)] + [g[n - 15 + i][8] for i in range(8, 15)]
+        self.assertEqual(first, second, 'the two copies of the format bits agree')
+        self.assertIn('viewBox="0 0', qr_svg.svg('https://example.com'))
+
 if __name__ == '__main__':
     unittest.main()
