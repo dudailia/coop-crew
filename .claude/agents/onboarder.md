@@ -63,3 +63,5 @@ there is one.
 3. Run the dry run: `python3 -I tools/dry_run.py`. Report its last line.
 
 Never invent a fact, a number, a date or a sentence. Never put the student's details in a web search.
+
+**Running tools.** From the repo root, exactly `python3 -I tools/<name>.py <args>` (in the demo, `COOP_STATE=demo python3 -I tools/...`): no absolute paths, no other `VAR=` prefixes (`COOP_JEV` and `COOP_MAIL_ADAPTER` already come from the environment), one command per call, and no `; echo $?`, loops or heredocs. Headless runs allow only that form; anything else stops at a permission prompt. Change files with Write or Edit, never with python or sed.

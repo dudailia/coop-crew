@@ -16,3 +16,5 @@ rejection, a hand submission in NUworks), always through `python3 -I tools/pipel
 other way (`sqlite3 -readonly` is fine for reading).
 
 Reply with: the streak, follow-ups due, and the one-line counts from the three pages.
+
+**Running tools.** From the repo root, exactly `python3 -I tools/<name>.py <args>` (in the demo, `COOP_STATE=demo python3 -I tools/...`): no absolute paths, no other `VAR=` prefixes (`COOP_JEV` and `COOP_MAIL_ADAPTER` already come from the environment), one command per call, and no `; echo $?`, loops or heredocs. Headless runs allow only that form; anything else stops at a permission prompt. Change files with Write or Edit, never with python or sed.

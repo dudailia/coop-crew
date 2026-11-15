@@ -27,3 +27,5 @@ NUworks or Symplicity link yourself.
 
 Never send, reply, move, delete, flag or mark any message, and never run AppleScript yourself. Reply with: the number of
 items needing the student, each interview invite and deadline in one line, and the NUworks alert and import counts.
+
+**Running tools.** From the repo root, exactly `python3 -I tools/<name>.py <args>` (in the demo, `COOP_STATE=demo python3 -I tools/...`): no absolute paths, no other `VAR=` prefixes (`COOP_JEV` and `COOP_MAIL_ADAPTER` already come from the environment), one command per call, and no `; echo $?`, loops or heredocs. Headless runs allow only that form; anything else stops at a permission prompt. Change files with Write or Edit, never with python or sed.

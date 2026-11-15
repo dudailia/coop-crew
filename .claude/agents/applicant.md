@@ -18,3 +18,5 @@ submits the pack by hand from TODAY.html.
 
 After a submit, tell the conductor each result line verbatim, and remind the student to set clean_pass
 (`python3 -I tools/pipeline.py set <id> clean_pass=yes|no --why "..."`, yes when they made no heavy edits).
+
+**Running tools.** From the repo root, exactly `python3 -I tools/<name>.py <args>` (in the demo, `COOP_STATE=demo python3 -I tools/...`): no absolute paths, no other `VAR=` prefixes (`COOP_JEV` and `COOP_MAIL_ADAPTER` already come from the environment), one command per call, and no `; echo $?`, loops or heredocs. Headless runs allow only that form; anything else stops at a permission prompt. Change files with Write or Edit, never with python or sed.

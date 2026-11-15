@@ -44,3 +44,7 @@ every tool runs as `COOP_STATE=demo python3 -I tools/...`.
 Give each subagent: the role ids or companies to work on, the state root (repo root, or `demo/`), and the limit for this
 run. Agents that have no Bash hand off through files (`data/incoming/`); you record them with the tools named in the
 command. Run independent agents in parallel only when none of them touches Mail or a browser.
+
+Run every tool, yourself and in agents, from the repo root as exactly `python3 -I tools/<name>.py <args>` (demo:
+`COOP_STATE=demo python3 -I tools/...`): no absolute paths, no other `VAR=` prefixes, one command per call, no
+`; echo $?`, loops or heredocs. Headless runs allow only that form (the live /run on 2026-11-14 stalled on each of these).
