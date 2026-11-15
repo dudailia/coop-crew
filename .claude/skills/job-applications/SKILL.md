@@ -8,8 +8,8 @@ description: >-
 ---
 # Job applications
 
-One shared how-to for the application path. Adapted for coop-crew from the job-applications skill by the author
-(MIT, included with his permission; see THIRD_PARTY.md). <!-- TODO: add the author's GitHub handle -->
+One shared how-to for the application path. Adapted for coop-crew from the job-applications skill
+(MIT, contributed with the author's permission; see THIRD_PARTY.md).
 Facts, locks, and numbers live in the student's `profile/`. Load this skill for the path; read the named files for the rules.
 In this file "the student" is the owner: the person whose name goes on every application.
 

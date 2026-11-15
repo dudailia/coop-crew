@@ -7,9 +7,11 @@ Run one full cycle as the conductor (CLAUDE.md). **Before every step**, run `pyt
 If it prints STOP (exit 3), stop the cycle at once and tell the student. Limits for this run: at most 15 new postings
 from each scout, and tailor at most `limits.applications_per_day` roles (profile/settings.json, default 5).
 
-1. `inbox`: delegate to the **inbox** agent.
+1. `inbox`: delegate to the **inbox** agent. In mode "nuworks+external" it also reads NUworks job-alert emails and the
+   postings the student saved into `data/nuworks-import/` (the default NUworks path; rows land in `data/incoming/`).
 2. `scout`: run `python3 -I tools/scan_boards.py` (boards in data/boards.txt, if any). Delegate to **scout-web**
-   (and **scout-nuworks** only if `profile/settings.json` has mode "nuworks+external" and nuworks.enabled true).
+   (and **scout-nuworks**, the optional browser reader, only if `profile/settings.json` has mode "nuworks+external" and
+   nuworks.enabled true: the student turned it on after the terms notice).
    Then append any new boards from `data/incoming/boards-*.txt` to `data/boards.txt` with the Write tool (no
    duplicates), and run `python3 -I tools/pipeline.py import` (it deduplicates against the pipeline).
    For roles with no or thin posting text, run `python3 -I tools/fetch_posting.py <id>`.

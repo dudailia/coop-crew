@@ -44,6 +44,26 @@ function posting(j) {
     </script>`);
 }
 
+// The live student app (seen on NUworks, 2026-11-14): rows have no link or id in the markup (they open by click), and the
+// page loads its rows from /api/v2/jobs and a posting from /api/v3/jobs/<id> as JSON. The keyword "app" serves that shape.
+const APP_JOBS = [
+  { job_id: '0123456789abcdef0123456789abcdef', job_title: 'Data Engineering Co-Op', name: 'Example Data Corp', job_location: 'Boston, Massachusetts, United States',
+    deadline: 'Dec 26, 2026', postdate: 'Oct 30, 2026', job_type: ['Co-op'], blind_flag: 0 },
+  { job_id: 'fedcba9876543210fedcba9876543210', job_title: 'Analytics Co-Op', name: 'Sample Insights', job_location: 'Remote',
+    deadline: 'Nov 20, 2026', postdate: 'Nov 2, 2026', job_type: ['Co-op'], blind_flag: 0 },
+];
+function appListing(keywords) {
+  return page('Search Results', `<div class="list-items">` + APP_JOBS.map((j, i) => `
+    <div id="list-item-${i}" role="link" class="list-item list_rows cursor-pointer"><div class="list-item-body">
+      <div class="list-item-title"><span>${j.job_title}</span></div><div class="list-item-subtitle"><span>${j.name} - ${j.job_location}</span></div>
+    </div></div>`).join('') + `</div>
+    <script>fetch('/api/v2/jobs?keywords=${encodeURIComponent(keywords)}&page=1&json_mode=read_only').then((r) => r.json()).catch(() => {});</script>`);
+}
+function appPosting(j) {
+  return page('Job Details', `<div class="job-pane"><h1>${j.job_title}</h1></div>
+    <script>fetch('/api/v3/jobs/${j.job_id}').then((r) => r.json()).catch(() => {});</script>`);
+}
+
 export function startFixture() {
   const log = [];
   const server = http.createServer((req, res) => {
@@ -59,8 +79,20 @@ export function startFixture() {
       if (k === 'error') return send(500, page('Error', '<h1>Error</h1><p>Something went wrong.</p>'));
       if (k === 'login') return send(302, '', { location: '/login?next=/students/' });
       if (u.searchParams.get('page') !== '1') return send(200, page('Jobs - NUworks', '<p>No jobs found</p>'));
+      if (k === 'app') return send(200, appListing(k));
       return send(200, listing());
     }
+    const json = (v) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(v)); };
+    if (u.pathname === '/api/v2/jobs') return json({ perPage: 20, page: 1, total: APP_JOBS.length, models: APP_JOBS });
+    const api = u.pathname.match(/^\/api\/v3\/jobs\/([0-9a-f]{32})$/);
+    if (api) {
+      const j = APP_JOBS.find((x) => x.job_id === api[1]);
+      if (j) return json({ job_id: j.job_id, job_title: j.job_title, employer_name: j.name, job_location: j.job_location,
+        job_type: [{ _id: 1, _label: 'Co-op' }], job_desc: '<p>Build data pipelines &amp; dashboards.</p><ul><li>Python</li><li>SQL</li></ul>',
+        qualifications: '<p>Second-year students or above.</p>', application_deadline: 'December 26, 2026', workplace_type: { _id: 'h', _label: 'Hybrid' } });
+    }
+    const app = u.pathname.match(/^\/students\/app\/jobs\/detail\/([0-9a-f]{32})$/);
+    if (app) { const j = APP_JOBS.find((x) => x.job_id === app[1]); if (j) return send(200, appPosting(j)); }
     const m = u.pathname.match(/^\/students\/app\/jobs\/detail\/([\w-]+)$/);
     if (m) { const j = JOBS.find((x) => x.id === m[1]); if (j) return send(200, posting(j)); }
     return send(404, page('Page not found', '<h1>Page not found</h1>'));

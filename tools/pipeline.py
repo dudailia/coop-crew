@@ -216,7 +216,13 @@ def main():
     elif a.cmd == 'apply-verdicts':
         # The screener's file: [{"id", "verdict", "reason", "question", "banned_check": {"s1","s2","s3","verdict","evidence"}}]
         import banned
-        for v in K.load_json(a.args[0], []):
+        # A wrong path used to record nothing, silently (live /demo, 2026-11-14). A path relative to the state folder
+        # (data/incoming/... under COOP_STATE=demo) is found too; anything else fails loudly.
+        f = a.args[0] if os.path.exists(a.args[0]) else os.path.join(K.STATE, a.args[0])
+        if not os.path.exists(f): sys.exit(f'apply-verdicts: no such file: {a.args[0]} (nothing recorded)')
+        vs = K.load_json(f, None)
+        if not isinstance(vs, list) or not vs: sys.exit(f'apply-verdicts: {f} is not a non-empty JSON list (nothing recorded)')
+        for v in vs:
             try:
                 r = c.execute('select company from roles where id = ?', (v.get('id'),)).fetchone()
                 bc = v.get('banned_check')

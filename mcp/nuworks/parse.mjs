@@ -86,7 +86,7 @@ export function extractPosting() {
 
 const CAPTCHA_RE = /captcha|are you a robot|verify (that )?you are (a )?human|unusual traffic|security check|cf-challenge|turnstile/i;
 const ERROR_RE = /^(error|access denied|forbidden|page not found|not found|service unavailable|something went wrong|session expired)\b/i;
-const LOGIN_PATH_RE = /\/(login|signin|sign-in|sso|saml|shibboleth|auth|idp|adfs)(\b|\/|\.|\?)/i;
+export const LOGIN_PATH_RE = /\/(login|signin|sign-in|sso|saml|shibboleth|auth|idp|adfs)(\b|\/|\.|\?)/i;
 
 /**
  * Classifies a loaded page. Returns null when it is a normal NUworks page, else the reason to stop the run.
@@ -106,4 +106,46 @@ export function classifyPage(p, baseHost) {
 export function applicantTypeMessage(text) {
   const m = (text || '').match(/[^.\n]*(applicant type|not eligible to apply|does not match your (profile|applicant)|you are not eligible)[^.\n]*[.]?/i);
   return m ? m[0].trim() : '';
+}
+
+// ---- The student app's own data (live check, 2026-11-14) ----
+// The listing page (/students/app/jobs/search) is an Angular app: its rows carry no posting link or id in the markup
+// (a row opens its posting by click, and the reader never clicks). The page fetches its rows as JSON from
+// /api/v2/jobs?keywords=...&page=N&json_mode=read_only, and a posting from /api/v3/jobs/<id>. The server reads those
+// responses as the page receives them (no extra request); extractListing/extractPosting stay as the fallback.
+export const LIST_API = /^\/api\/v\d+\/jobs\/?$/;
+export const POSTING_API = /^\/api\/v\d+\/jobs\/([0-9a-f]{16,})\/?$/i;
+
+/** Plain text from the app's values: HTML strings, {_label} objects, and lists of either. */
+export function plain(v) {
+  if (v == null) return '';
+  if (Array.isArray(v)) return v.map(plain).filter(Boolean).join(', ');
+  if (typeof v === 'object') return plain(v._label ?? v.label ?? v.name ?? '');
+  return String(v).replace(/<(br|\/p|\/li|\/div|\/h\d)\s*\/?>/gi, '\n').replace(/<li[^>]*>/gi, '- ').replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+    .replace(/&#39;|&rsquo;|&lsquo;/g, "'").replace(/&ldquo;|&rdquo;/g, '"').replace(/&ndash;|&mdash;/g, '-')
+    .replace(/[ \t]+/g, ' ').replace(/\n\s*\n\s*\n+/g, '\n\n').trim();
+}
+
+/** Rows from the listing JSON: [{title, employer, location, dates, deadline, posting_id, url, position_type}] */
+export function rowsFromApi(json, base) {
+  const models = (json && Array.isArray(json.models)) ? json.models : [];
+  return models.filter((m) => m && m.job_id && m.job_title).map((m) => ({
+    title: plain(m.job_title), employer: m.blind_flag ? '(employer hidden by NUworks)' : plain(m.name),
+    location: plain(m.job_location), dates: plain(m.postdate) ? `posted ${plain(m.postdate)}` : '', deadline: plain(m.deadline),
+    posting_id: String(m.job_id), url: new URL(`app/jobs/detail/${m.job_id}`, base).href, position_type: plain(m.job_type),
+  }));
+}
+
+/** Fields from one posting's JSON, in the shape nuworks_get_posting returns. */
+export function postingFromApi(j) {
+  if (!j || !j.job_id) return null;
+  return {
+    title: plain(j.job_title), employer: plain(j.employer_name || j.job_emp), location: plain(j.job_location || j.location),
+    position_type: plain(j.job_type), description: plain(j.job_desc), qualifications: plain(j.qualifications),
+    application_instructions: plain(j.contact_blurb || j.resume_mode), documents_required: plain(j.documents_required),
+    deadline: plain(j.application_deadline), dates: plain(j.job_dates || [j.start_date, j.job_end].filter(Boolean).join(' to ')),
+    work_term: plain(j.el_work_term || j.recruiting_cycle), workplace: plain(j.workplace_type || j.symp_remote_onsite || j.location_type),
+    pay: plain(j.payment_range || j.salary), work_authorization: plain(j.work_authorization),
+  };
 }

@@ -10,6 +10,7 @@
       "Write(out/**)",
       "Edit(out/**)",
       "Write(data/incoming/**)",
+      "Edit(data/incoming/**)",
       "Write(profile/**)",
       "Edit(profile/**)",
       "Write(demo/**)",
@@ -30,7 +31,9 @@
       "Write(data/boards.txt)",
       "Edit(data/boards.txt)",
       "Write(logs/suggested-replies.json)",
+      "Edit(logs/suggested-replies.json)",
       "Write(demo/logs/suggested-replies.json)",
+      "Edit(demo/logs/suggested-replies.json)",
       "Bash(cp * assets/cv.pdf)"
     ],
     "deny": [

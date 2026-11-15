@@ -23,7 +23,8 @@ there is one.
    availability sentence with them, word for word (`coop.availability`).
 4. **Sourcing mode.** (a) NUworks plus external, (b) external only, or (c) self-developed co-op. Self-developed turns on
    the banned-list check: create `profile/banned-employers.md` from `templates/profile/banned-employers.example.md`.
-   NUworks stays off until the student turns it on themselves (see the end).
+   In mode (a), NUworks comes from the student's job-alert emails and saved postings (`data/nuworks-import/`): suggest
+   they save a search in NUworks with email alerts on. The optional browser reader stays off (see the end).
 5. **Work authorization.** US citizen, permanent resident, F-1 (CPT for co-op), or other. Write the exact sentence to use,
    and the sponsorship answers now and later. For F-1 also `visa_type` "F-1 CPT", `visa_type_names` ["F-1", "F1",
    "CPT"] and `never_visa_types` ["H-1B"]. Repeat for each other country they target. Never write a sentence stronger
@@ -54,8 +55,11 @@ there is one.
    correct it. Fix what they say and run it again.
 2. Tell them the two things only they can switch on, as commands to type themselves:
    - schedules (if they said yes): `! python3 -I tools/schedule.py install`
-   - NUworks reader (only in mode a, and only if they want it): `! python3 -I tools/nuworks_enable.py on`, after
-     reading `mcp/nuworks/APPROVAL.md`. It is off until then.
+   - the optional NUworks browser reader (only in mode a, and only if they ask for it): say plainly that Symplicity's
+     terms of use prohibit automated access without Symplicity's permission (`mcp/nuworks/APPROVAL.md`), and that the
+     default path (alert emails, saved postings) does not need it. If they still want it, the command is
+     `! python3 -I tools/nuworks_enable.py on`; it shows the notice and needs their typed acknowledgement. Never
+     recommend it.
 3. Run the dry run: `python3 -I tools/dry_run.py`. Report its last line.
 
 Never invent a fact, a number, a date or a sentence. Never put the student's details in a web search.

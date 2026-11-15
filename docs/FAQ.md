@@ -10,9 +10,15 @@ than 40.
 **Can it make things up?** Every number and name in a resume, answer or email must be in your `profile/facts.md` or the
 posting; the checker and the resume build fail otherwise. Work authorization is your own sentence, word for word.
 
-**Is the NUworks reader allowed?** The Northeastern co-op office approved read-only access to listings you can already
-see, with no applying, messaging or uploading (`mcp/nuworks/APPROVAL.md`). The reader stays off until you turn it on
-yourself, reads slowly, and has no apply, message, upload or edit tools.
+**How does it use NUworks?** By default only through your own email and files: the inbox agent reads NUworks job-alert
+emails (from searches you saved in NUworks) and postings you save from NUworks into `data/nuworks-import/`. No NUworks
+page is loaded, and you apply in NUworks yourself.
+
+**Is the NUworks browser reader allowed?** Symplicity's terms of use, which govern NUworks, prohibit automated access
+("automated software, tools, devices, agents, scripts robots [...] browsers [...] to navigate, search, access") without
+Symplicity's prior permission. The Northeastern co-op office approved read-only use, but that is not Symplicity's
+permission. So the reader stays off: it turns on only if you type an acknowledgement after that notice
+(`mcp/nuworks/APPROVAL.md`, `GUIDE.md`).
 
 **What is a self-developed co-op mode?** A co-op you find yourself cannot be with an employer that recruits through
 NUworks. In that mode every employer is checked against your banned list (any spelling) and with three web checks.

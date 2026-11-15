@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { startFixture } from './fixture.mjs';
-import { classifyPage } from '../parse.mjs';
+import { classifyPage, rowsFromApi, postingFromApi } from '../parse.mjs';
 
 const SERVER = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'server.mjs');
 let fx;
@@ -28,7 +28,7 @@ async function connect(dir, extraEnv = {}) {
   const transport = new StdioClientTransport({
     command: process.execPath, args: [SERVER], stderr: 'ignore',
     env: { ...process.env, COOP_STATE: dir, NUWORKS_BASE_URL: fx.base, NUWORKS_DELAY_MS: '10', NUWORKS_OPEN_CMD: 'true', NUWORKS_TEST_SIGNED_IN: '1',
-      NUWORKS_DRY_OPEN: '1', ...extraEnv },
+      NUWORKS_DRY_OPEN: '1', NUWORKS_API_GRACE_MS: '1500', ...extraEnv },
   });
   const client = new Client({ name: 'nuworks-test', version: '0.0.0' });
   await client.connect(transport);
@@ -101,6 +101,33 @@ test('enabled: status, search, posting, cache, open, and no POST ever reaches NU
     const st2 = body(await c.callTool({ name: 'nuworks_status', arguments: {} }));
     assert.ok(st2.blocked_requests >= 1, `the posting page tried to POST and was blocked (status: ${JSON.stringify(st2).slice(0, 400)})`);
   } finally { await c.close(); }
+});
+
+test('the live student app: rows and postings come from the JSON the page loads (no ids in the markup, nothing clicked)', async () => {
+  const c = await connect(state(ENABLED));
+  try {
+    const s = body(await c.callTool({ name: 'nuworks_search', arguments: { keywords: 'app', max_pages: 1 } }));
+    assert.equal(s.rows.length, 2, `search answered: ${JSON.stringify(s).slice(0, 500)}`);
+    const r = s.rows.find((x) => x.posting_id === '0123456789abcdef0123456789abcdef');
+    assert.equal(r.title, 'Data Engineering Co-Op'); assert.equal(r.employer, 'Example Data Corp');
+    assert.equal(r.location, 'Boston, Massachusetts, United States'); assert.equal(r.deadline, 'Dec 26, 2026');
+    assert.equal(r.position_type, 'Co-op'); assert.match(r.url, /app\/jobs\/detail\/0123456789abcdef0123456789abcdef$/);
+    const p = body(await c.callTool({ name: 'nuworks_get_posting', arguments: { id: '0123456789abcdef0123456789abcdef' } }));
+    assert.match(p.description, /Build data pipelines & dashboards\.\n+- Python/);
+    assert.equal(p.employer, 'Example Data Corp'); assert.equal(p.position_type, 'Co-op'); assert.equal(p.workplace, 'Hybrid');
+    assert.equal(p.deadline, 'December 26, 2026'); assert.match(p.qualifications, /Second-year/);
+    assert.deepEqual(fx.nonGet(), [], 'no POST or other non-GET request may reach NUworks');
+  } finally { await c.close(); }
+});
+
+test('rowsFromApi and postingFromApi read the app JSON', () => {
+  const base = new URL('https://x.example/students/');
+  const rows = rowsFromApi({ models: [{ job_id: 'abc', job_title: 'Co-op &amp; more', name: 'Hidden Co', blind_flag: 1, job_type: ['Co-op', 'Full Time'] }, { job_title: 'no id' }] }, base);
+  assert.deepEqual(rows.map((x) => [x.title, x.employer, x.position_type, x.url]),
+    [['Co-op & more', '(employer hidden by NUworks)', 'Co-op, Full Time', 'https://x.example/students/app/jobs/detail/abc']]);
+  assert.deepEqual(rowsFromApi(null, base), []);
+  assert.equal(postingFromApi({}), null);
+  assert.equal(postingFromApi({ job_id: 'abc', job_emp: { name: 'Emp' } }).employer, 'Emp');
 });
 
 for (const [kw, re] of [['captcha', /CAPTCHA/], ['error', /error page/], ['login', /not signed in/]]) {

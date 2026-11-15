@@ -3,7 +3,7 @@
 #   python3 -m unittest discover -s tests -v
 # Test 1 (fresh install + /demo): tests/acceptance_fresh_install.sh. Test 7 (NUworks): npm run test:nuworks.
 # Test 10 (WSL): tests/acceptance_linux_docker.sh runs install.sh and the .eml test in a Linux container.
-import datetime as dt, json, os, re, shutil, sqlite3, subprocess, sys, tempfile, time, unittest
+import datetime as dt, glob, json, os, re, shutil, sqlite3, subprocess, sys, tempfile, time, unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = f'{ROOT}/tools'
@@ -262,6 +262,19 @@ class Guard_RulesInCode(unittest.TestCase):
                     'sqlite3 data/pipeline.sqlite "insert into approvals values (1)"', 'python3 -I tools/send_due.py --mark-sent m1',
                     'rm STOP', 'curl https://www.linkedin.com/in/someone'):
             self.assertEqual(self.guard('Bash', {'command': cmd}), 2, cmd)
+        # every way of running approve.py (or its code) is blocked
+        for cmd in ('python3 tools/approve.py r1', 'cd tools && python3 approve.py r1', 'COOP_STATE=demo python3 -I tools/approve.py r1',
+                    '/usr/bin/python3.12 -I /x/coop-crew/tools/approve.py r1', 'env X=1 python tools/approve.py r1',
+                    'uv run tools/approve.py r1', 'bash -c "python3 -I tools/approve.py r1"', './tools/approve.py r1',
+                    'cd tools; python3 -m approve r1', 'python3 -c "import approve; approve.approve([\'r1\'])"',
+                    'python3 -c "from approve import approve"', 'python3 -c "import runpy; runpy.run_path(\'tools/approve.py\')"',
+                    'echo tools/approve.py | xargs python3', 'ls; python3 -I tools/approve.py r1', 'sh tools/approve.py r1'):
+            self.assertEqual(self.guard('Bash', {'command': cmd}), 2, cmd)
+        # a fetch is blocked wherever the URL sits in the command, not only right after curl
+        for cmd in ('for u in https://www.symplicity.com/terms https://www.symplicity.com/legal; do curl -s "$u"; done',
+                    'U=https://northeastern-csm.symplicity.com/students/; curl -sL "$U"', 'wget -qO- https://x.symplicity.com/a',
+                    'U=https://www.linkedin.com/in/x; curl "$U"', 'python3 -c "import urllib.request as u; u.urlopen(\'https://www.linkedin.com/in/x\')"'):
+            self.assertEqual(self.guard('Bash', {'command': cmd}), 2, cmd)
         for p in ('APPROVE.txt', 'data/pipeline.sqlite', '.claude/settings.json', '.mcp.json', 'tools/applicant.py'):
             self.assertEqual(self.guard('Write', {'file_path': f'/x/coop-crew/{p}'}), 2, p)
         self.assertEqual(self.guard('WebFetch', {'url': 'https://www.linkedin.com/in/x'}), 2)
@@ -269,9 +282,110 @@ class Guard_RulesInCode(unittest.TestCase):
 
     def test_allowed(self):
         for cmd in ('python3 -I tools/applicant.py submit r1', 'python3 -I tools/pipeline.py list', 'sqlite3 -readonly data/pipeline.sqlite "select 1"',
-                    'python3 -I tools/send_due.py', 'COOP_STATE=demo python3 -I tools/resume.py x'):
+                    'python3 -I tools/send_due.py', 'COOP_STATE=demo python3 -I tools/resume.py x',
+                    # reading approve.py is not running it
+                    'sed -n 1,60p tools/approve.py; grep -n "mock" tools/email_audit.py', 'cat tools/approve.py', 'head -20 tools/approve.py',
+                    'grep -rn "approve.py" .claude/commands', 'wc -l tools/approve.py && git log --oneline -- tools/approve.py',
+                    'git diff tools/approve.py', 'grep -rn "symplicity.com" mcp/nuworks', 'grep -n linkedin.com profile/settings.json'):
             self.assertEqual(self.guard('Bash', {'command': cmd}), 0, cmd)
+
+    def test_every_write_rule_has_an_edit_rule(self):
+        # Claude Code checks the Write tool against Edit(...) rules: a Write(...) rule alone is not applied, and a headless
+        # /run then cannot hand off through data/incoming/ (found in the live acceptance run, 2026-11-14)
+        allow = json.load(open(f'{ROOT}/.claude/settings.json'))['permissions']['allow']
+        for r in allow:
+            m = re.fullmatch(r'Write\((.*)\)', r)
+            if m: self.assertIn(f'Edit({m.group(1)})', allow, f'{r} needs a matching Edit rule')
         self.assertEqual(self.guard('Write', {'file_path': '/x/coop-crew/out/r1/brief.md'}), 0)
+
+FIX = f'{ROOT}/tests/fixtures/nuworks'
+
+def tiny_pdf(lines):
+    """A one-page PDF with these text lines (standard library only), for the NUworks import test."""
+    esc = lambda s: s.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+    content = 'BT /F1 11 Tf 50 750 Td 14 TL ' + ' '.join(f'({esc(l)}) Tj T*' for l in lines) + ' ET'
+    objs = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+            '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+            f'<< /Length {len(content)} >>\nstream\n{content}\nendstream', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>']
+    out, offs = '%PDF-1.4\n', []
+    for i, o in enumerate(objs, 1): offs.append(len(out)); out += f'{i} 0 obj\n{o}\nendobj\n'
+    x = len(out)
+    out += f'xref\n0 {len(objs) + 1}\n0000000000 65535 f \n' + ''.join(f'{o:010d} 00000 n \n' for o in offs)
+    return (out + f'trailer\n<< /Size {len(objs) + 1} /Root 1 0 R >>\nstartxref\n{x}\n%%EOF\n').encode('latin-1')
+
+class NUworks_DefaultPath(unittest.TestCase):
+    """The default NUworks path: job-alert emails and postings the student saved. No NUworks page is ever loaded."""
+    def setUp(self):
+        self.st = make_state(mode='nuworks+external')
+        os.makedirs(f'{self.st}/data/inbox'); os.makedirs(f'{self.st}/data/nuworks-import')
+
+    def incoming(self, prefix):
+        fs = sorted(glob.glob(f'{self.st}/data/incoming/{prefix}-*.json'))
+        return [r for f in fs for r in json.load(open(f))]
+
+    def test_alert_email_becomes_nuworks_rows(self):
+        shutil.copy(f'{FIX}/alert.eml', f'{self.st}/data/inbox/alert.eml')
+        # an ordinary email in the same folder is not an alert
+        open(f'{self.st}/data/inbox/recruiter.eml', 'w').write('From: Sam Lee <sam@example.com>\nSubject: Coffee chat?\n'
+            'Date: Fri, 13 Nov 2026 09:00:00 -0500\nContent-Type: text/plain\n\nWould you like to talk about the data team?\n')
+        r = run(self.st, 'nuworks_alerts.py', check=True)
+        self.assertIn('1 alert email(s), 2 postings', r.stdout)
+        rows = {x['posting_id']: x for x in self.incoming('nuworks-alerts')}
+        self.assertEqual(set(rows), {'0123456789abcdef0123456789abcdef', 'fedcba9876543210fedcba9876543210'}, 'footer links are not postings')
+        a, b = rows['0123456789abcdef0123456789abcdef'], rows['fedcba9876543210fedcba9876543210']
+        self.assertEqual((a['title'], a['company'], a['location'], a['deadline']), ('Data Analyst Co-op', 'Example Analytics Inc.', 'Boston, MA', '2026-12-15'))
+        self.assertEqual((b['title'], b['company'], b['location'], b['deadline']), ('Machine Learning Engineering Co-op', 'Example Robotics LLC', 'Remote', '2027-01-08'))
+        self.assertTrue(all(x['source'] == 'nuworks' and x['channel'] == 'nuworks' for x in rows.values()))
+        self.assertIn('saved search: Data co-op', a['description'])
+        # each email is read once
+        self.assertIn('no new postings', run(self.st, 'nuworks_alerts.py', check=True).stdout)
+        run(self.st, 'pipeline.py', 'import', check=True)
+        got = db(self.st).execute("select source, channel from roles").fetchall()
+        self.assertEqual([(x['source'], x['channel']) for x in got], [('nuworks', 'nuworks')] * 2)
+
+    def test_off_outside_nuworks_mode(self):
+        st = make_state(mode='external'); os.makedirs(f'{st}/data/inbox')
+        shutil.copy(f'{FIX}/alert.eml', f'{st}/data/inbox/alert.eml')
+        self.assertIn('off', run(st, 'nuworks_alerts.py', check=True).stdout)
+        self.assertIn('off', run(st, 'nuworks_import.py', check=True).stdout)
+        self.assertEqual(glob.glob(f'{st}/data/incoming/nuworks-*.json'), [])
+
+    def test_manual_import_html_pdf_and_fill_existing(self):
+        shutil.copy(f'{FIX}/alert.eml', f'{self.st}/data/inbox/alert.eml')
+        run(self.st, 'nuworks_alerts.py', check=True); run(self.st, 'pipeline.py', 'import', check=True)
+        known = db(self.st).execute("select id from roles where posting_id = '0123456789abcdef0123456789abcdef'").fetchone()['id']
+        for f in ('posting-saved.html', 'posting-new.html'): shutil.copy(f'{FIX}/{f}', f'{self.st}/data/nuworks-import/{f}')
+        has_pdf = bool(shutil.which('pdftotext'))
+        if has_pdf:
+            open(f'{self.st}/data/nuworks-import/saved.pdf', 'wb').write(tiny_pdf([
+                'Data Engineering Co-op', 'Employer: Example Health Group', 'Location: Boston, MA',
+                'Application Deadline: Dec 1, 2026', 'Job ID: 99887766', 'Description',
+                'Build data pipelines in Python for six months.']))
+        r = run(self.st, 'nuworks_import.py', check=True)
+        self.assertIn(f'full text added to 1 role(s) already in the pipeline: {known}', r.stdout)
+        posting = open(f'{self.st}/out/{known}/posting.md').read()
+        self.assertIn('builds SQL pipelines and Python dashboards', posting)
+        self.assertNotIn('var x', posting, 'scripts are not posting text')
+        rows = {x['title']: x for x in self.incoming('nuworks-import')}
+        new = rows['Software Engineering Co-op']
+        self.assertEqual((new['company'], new['location'], new['deadline'], new['posting_id']),
+                         ('Example Freight Systems', 'New York, NY', '2027-01-20', 'aaaabbbbccccddddeeeeffff00001111'))
+        if has_pdf:
+            p = rows['Data Engineering Co-op']
+            self.assertEqual((p['company'], p['location'], p['deadline'], p['posting_id']), ('Example Health Group', 'Boston, MA', '2026-12-01', '99887766'))
+        self.assertTrue(all(x['source'] == 'nuworks' for x in rows.values()))
+        self.assertIn('nothing to import', run(self.st, 'nuworks_import.py', check=True).stdout, 'each file is read once')
+        self.assertTrue(os.path.exists(f'{self.st}/data/nuworks-import/posting-new.html'), 'the student\'s files are not moved')
+
+class Pipeline_ApplyVerdicts(unittest.TestCase):
+    def test_missing_file_fails_loudly_and_state_relative_path_works(self):
+        st = make_state()
+        r = run(st, 'pipeline.py', 'apply-verdicts', 'data/incoming/missing.json')
+        self.assertEqual(r.returncode, 1); self.assertIn('nothing recorded', r.stderr)
+        os.makedirs(f'{st}/data/incoming', exist_ok=True)
+        json.dump([{'id': 'zz', 'verdict': 'DQ', 'reason': 'x'}], open(f'{st}/data/incoming/v.json', 'w'))
+        r = run(st, 'pipeline.py', 'apply-verdicts', 'data/incoming/v.json')   # relative to the state folder, as in /demo
+        self.assertEqual(r.returncode, 0); self.assertIn('zz: not recorded: no role zz', r.stdout)
 
 class T10_EmlAdapter(unittest.TestCase):
     def test_eml_drafts_instead_of_mail(self):

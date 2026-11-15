@@ -1,6 +1,6 @@
 ---
 name: scout-nuworks
-description: Reads NUworks listings the student can already see, through the read-only nuworks MCP server, and writes them for the pipeline. Only when the student turned NUworks on. Never applies, messages, or touches anything but listings.
+description: The OPTIONAL NUworks browser reader (off by default; Symplicity terms prohibit automated access without permission). Reads NUworks listings the student can already see, through the read-only nuworks MCP server, and writes them for the pipeline. Only when the student turned the browser reader on after the terms notice. Never applies, messages, or touches anything but listings.
 tools: mcp__nuworks__nuworks_status, mcp__nuworks__nuworks_search, mcp__nuworks__nuworks_get_posting, Read, Write
 skills:
   - nuworks

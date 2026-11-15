@@ -10,7 +10,7 @@
 import json, os, re, shutil, subprocess, sys, time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEMO = f'{ROOT}/demo'
-BOARDS = ['greenhouse:figureai', 'greenhouse:databricks', 'ashby:cohere']
+BOARDS = ['greenhouse:figureai', 'greenhouse:databricks', 'greenhouse:klaviyocampus']
 CACHE = f'{ROOT}/templates/demo-cache/roles.json'
 
 def env():
@@ -24,9 +24,21 @@ def tool(name, *args, quiet=False):
 
 def stopped(): return any(os.path.exists(p) for p in (f'{ROOT}/STOP', f'{DEMO}/STOP', os.path.expanduser('~/STOP-AGENTS')))
 
-def relevance(r, words):
-    t = r['title'].lower()
-    return sum(1 for w in words if w in t) + (1 if re.search(r'winter|spring|co-?op|2027 start', t) else 0)
+MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+
+def relevance(r, words, coop):
+    """How likely the screener keeps this role: title words, plus what the posting text says about the student's cycle.
+    Titles alone picked roles that were summer-only or Master's-only (live /demo, 2026-11-14), so no pack was built."""
+    t = r['title'].lower(); d = (r.get('description') or '').lower()
+    season = (coop.get('cycle') or '').lower()
+    month = MONTHS[int(coop['start'][5:7]) - 1] if re.fullmatch(r'\d{4}-\d\d-\d\d', coop.get('start', '')) else ''
+    s = sum(1 for w in words if w in t)
+    if re.search(r'\bco-?op\b', t): s += 2
+    if season and re.search(rf'\b{season}\b', t + ' ' + d): s += 2
+    if month and re.search(rf'\b{month}\b', d): s += 1
+    if season != 'summer' and re.search(r'\bsummer\b', t + ' ' + d): s -= 3
+    if re.search(r"\b(master'?s|ph\.?d)\b[^.]{0,60}\b(required|candidate|student|degree)", d): s -= 2
+    return s
 
 def prepare(offline=False):
     if stopped(): print('STOP: the kill switch is on. /crew-resume first.'); sys.exit(3)
@@ -60,11 +72,11 @@ def prepare(offline=False):
         v, why, _ = SR.judge({'company': x['company'], 'title': x['title'], 'location': x.get('location', ''), 'deadline': x.get('deadline', '')}, x.get('description', ''))
         return v, why
     judged = [(x, *verdict(x)) for x in roles]
-    open_ = sorted([j for j in judged if j[1] is None], key=lambda j: -relevance(j[0], words))
+    open_ = sorted([j for j in judged if j[1] is None], key=lambda j: -relevance(j[0], words, s['coop']))
     pick, per = [], {}
     for x, v, why in open_:
         if per.get(x['company'], 0) < 2 and len(pick) < 3: pick.append(x); per[x['company']] = per.get(x['company'], 0) + 1
-    dq = sorted([j for j in judged if j[1] == 'DQ'], key=lambda j: -relevance(j[0], words))
+    dq = sorted([j for j in judged if j[1] == 'DQ'], key=lambda j: -relevance(j[0], words, s['coop']))
     used = set()
     for x, v, why in dq:  # one disqualified role per board, other boards first, to show different reasons
         if len(pick) >= 5: break

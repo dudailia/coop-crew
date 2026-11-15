@@ -13,7 +13,7 @@ description: >-
 ---
 # Anti-slop
 
-By the author, adapted for coop-crew (MIT, included with his permission; see THIRD_PARTY.md). <!-- TODO: add the author's GitHub handle -->
+Adapted for coop-crew (MIT, contributed with the author's permission; see THIRD_PARTY.md).
 
 Clean outgoing prose so it reads like its author wrote it. Keep what it says, and add nothing.
 

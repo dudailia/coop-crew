@@ -13,17 +13,24 @@ STATE = os.path.abspath(os.environ.get('COOP_STATE') or ROOT)
 STOPS = (f'{STATE}/STOP', f'{ROOT}/STOP', f'{ROOT}/demo/STOP', os.path.expanduser('~/STOP-AGENTS'))
 READ_ONLY = {'Read', 'Glob', 'Grep', 'LS', 'TodoWrite', 'TaskList', 'TaskGet'}
 
+FETCH = r'\b(curl|wget|urllib|urlopen|requests|httpx|aiohttp|fetch|lynx|w3m|playwright|chromium|open)\b'
 BASH_RULES = [
     (r'\bjev\b[^|;&]*\b(submit|daily|resume\s+--submit)\b|\bjev\b[^|;&]*--submit|--force\b[^|;&]*\bjev\b',
      'jev submits only through tools/applicant.py, which checks the student\'s approval'),
     (r'\bosascript\b', 'AppleScript is off limits to agents: Mail is used only by tools/send_due.py and tools/email_audit.py'),
-    (r'tools/approve\.py|approve\.py\b', 'only the student approves (/approve or APPROVE.txt); an agent cannot run approve.py'),
+    # running approve.py (or importing its code) is blocked; reading it (cat, sed, grep, git diff) is not
+    (r'\b(python[\d.]*|pypy[\d.]*|uv\s+run|sh|bash|zsh)\b[^|;&]*\bapprove\.py\b'          # an interpreter runs it
+     r'|(^|[;&|(`]|\$\()\s*(\w+=\S*\s+)*[\w./-]*\bapprove\.py\b'                          # run as the command itself
+     r'|approve\.py\b[^;&]*\|\s*xargs\b'                                                  # piped into xargs
+     r'|\bimport\s+approve\b|\bfrom\s+approve\s+import\b|-m\s+approve\b|run_path\([^)]*approve',  # its code, imported
+     'only the student approves (/approve or APPROVE.txt); an agent cannot run approve.py'),
     (r'APPROVE\.txt', 'APPROVE.txt is written by the student only'),
     (r'sqlite3?\b[^|;&]*(approvals|insert|update|delete|drop)', 'the pipeline changes only through tools/pipeline.py (every change is an event)'),
     (r'send_due\.py[^|;&]*--mark-sent', 'only the student records a hand-sent email'),
     (r'\brm\b[^|;&]*\bSTOP\b|STOP-AGENTS', 'the kill switch is turned off only by the student (/crew-resume)'),
-    (r'(curl|wget|python3?[^|;&]*urllib)[^|;&]*linkedin\.com', 'no LinkedIn automation or scraping'),
-    (r'(curl|wget)[^|;&]*(symplicity\.com|nuworks)', 'NUworks is read only through the nuworks MCP server'),
+    # a fetcher anywhere in the command plus the site anywhere in it: a URL kept in a variable or a loop list is caught too
+    (r'(?s)^(?=.*' + FETCH + r').*linkedin\.com', 'no LinkedIn automation or scraping'),
+    (r'(?s)^((?=.*' + FETCH + r').*symplicity\.com|(?=.*\b(curl|wget)\b).*nuworks)', 'NUworks is read only through the nuworks MCP server'),
     (r'\bsmtp|sendmail\b|\bmsmtp\b|\bmutt\b', 'no SMTP: email goes only through the student\'s approved drafts'),
 ]
 PATH_RULES = [

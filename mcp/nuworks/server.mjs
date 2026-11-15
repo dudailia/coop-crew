@@ -19,7 +19,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { extractListing, extractPosting, classifyPage } from './parse.mjs';
+import { extractListing, extractPosting, classifyPage, LOGIN_PATH_RE, LIST_API, POSTING_API, rowsFromApi, postingFromApi } from './parse.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
@@ -28,6 +28,10 @@ const NU_DIR = path.join(STATE, 'data', 'nuworks');
 const PROFILE_DIR = path.join(NU_DIR, 'browser-profile');
 const CACHE_DIR = path.join(NU_DIR, 'cache');
 const SESSION_FILE = path.join(NU_DIR, 'session.json');
+// Chromium drops session-only cookies when the browser closes, and NUworks keeps its sign-in in one, so the visible login
+// window's session did not reach the headless reader (live check, 2026-11-14). The cookies are saved here at sign-in
+// (mode 600, on this machine only) and loaded into every later browser. Never a password.
+const STORAGE_FILE = path.join(NU_DIR, 'storage-state.json');
 const SETTINGS_FILE = path.join(STATE, 'profile', 'settings.json');
 const LOG_FILE = path.join(STATE, 'logs', 'nuworks.log');
 const STOP_FILES = [...new Set([path.join(STATE, 'STOP'), path.join(ROOT, 'STOP'), path.join(os.homedir(), 'STOP-AGENTS')])];
@@ -39,6 +43,9 @@ const SEARCH_PATH = process.env.NUWORKS_SEARCH_PATH || 'app/jobs/search?keywords
 const POSTING_PATH = process.env.NUWORKS_POSTING_PATH || 'app/jobs/detail/{id}';
 const MAX_POSTINGS = Math.min(100, Number(process.env.NUWORKS_MAX_POSTINGS) || 100);
 const CACHE_TTL_MS = 24 * 3600 * 1000;
+// after the page has loaded, how long to wait for its own listing or posting data before parsing the markup instead
+const API_GRACE_MS = Number(process.env.NUWORKS_API_GRACE_MS || 6000);
+const apiWithin = (p) => Promise.race([p, new Promise((r) => setTimeout(() => r(null), API_GRACE_MS))]);
 const TEST_SIGNED_IN = process.env.NUWORKS_TEST_SIGNED_IN === '1';
 const DRY_OPEN = process.env.NUWORKS_DRY_OPEN === '1';
 // Hosts the student's own sign-in may pass through (visible login window only).
@@ -100,6 +107,7 @@ async function withBrowser(fn, { headless = true } = {}) {
   try { ctx = await chromium.launchPersistentContext(PROFILE_DIR, { headless, viewport: { width: 1280, height: 900 } }); }
   catch (e) { fs.rmSync(BUSY_FILE, { force: true }); throw e; }
   try {
+    try { await ctx.addCookies(JSON.parse(fs.readFileSync(STORAGE_FILE, 'utf8')).cookies || []); } catch { /* no saved sign-in yet */ }
     if (headless) {
       await ctx.route('**/*', (route) => {
         const req = route.request();
@@ -183,15 +191,33 @@ server.registerTool('nuworks_login', {
   const s = stopped(); if (s) return refuse(`STOP: the kill switch is on (${s}).`);
   if (TEST_SIGNED_IN) { fs.writeFileSync(SESSION_FILE, JSON.stringify({ signed_in_at: new Date().toISOString(), test: true })); return text('Test mode: sign-in window skipped.'); }
   log('login: opening a visible window; the student signs in');
-  const done = await withBrowser(async (page) => {
+  const done = await withBrowser(async (page, ctx) => {
     await page.goto(BASE.href, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => {});
+    // NUworks draws its sign-in form with JavaScript after the page loads, so "no password field yet" is not proof of a
+    // sign-in (it reported signed in before the student had typed anything; live check, 2026-11-14). Signed in means:
+    // on NUworks, off any sign-in path, no password field, and a sign-out link or the student app (/app/) on screen,
+    // seen on 3 checks in a row.
     const until = Date.now() + 5 * 60 * 1000;
+    let streak = 0;
     while (Date.now() < until) {
       if (page.isClosed()) return false;
-      const u = new URL(page.url());
-      const pw = await page.$('input[type=password]').catch(() => null);
-      if (u.host === BASE_HOST && !/\/(login|sso|saml|auth)/i.test(u.pathname) && !pw) return true;
       await new Promise((r) => setTimeout(r, 2000));
+      let ok = false;
+      try {
+        const u = new URL(page.url());
+        const seen = await page.evaluate(() => ({
+          pw: !!document.querySelector('input[type=password]'),
+          out: !!document.querySelector('a[href*="logout" i], a[href*="signout" i], a[href*="sign-out" i], a[href*="log-out" i]')
+            || /\b(log ?out|sign ?out)\b/i.test((document.body && document.body.textContent) || ''),
+        }));
+        ok = u.host === BASE_HOST && !LOGIN_PATH_RE.test(u.pathname + u.search) && !seen.pw && (seen.out || /\/app\//.test(u.pathname));
+      } catch { ok = false; } // mid-navigation
+      streak = ok ? streak + 1 : 0;
+      if (streak >= 3) {
+        await ctx.storageState({ path: STORAGE_FILE });
+        fs.chmodSync(STORAGE_FILE, 0o600);
+        return true;
+      }
     }
     return false;
   }, { headless: false });
@@ -236,9 +262,13 @@ server.registerTool('nuworks_search', {
   await withBrowser(async (page) => {
     for (let n = 1; n <= max_pages; n++) {
       const url = new URL(SEARCH_PATH.replace('{keywords}', encodeURIComponent(keywords)).replace('{page}', String(n)), BASE).href;
+      // the page's own listing data, as it arrives (no extra request); the markup parser is the fallback
+      const api = page.waitForResponse((r) => { try { const u = new URL(r.url()); return u.host === BASE_HOST && LIST_API.test(u.pathname); } catch { return false; } },
+        { timeout: 20000 }).then((r) => r.json()).catch(() => null);
       stop = await load(page, url);
       if (stop) return;
-      const { rows: got } = await page.evaluate(extractListing);
+      const fromApi = rowsFromApi(await apiWithin(api), BASE);
+      const got = fromApi.length ? fromApi : (await page.evaluate(extractListing)).rows;
       const fresh = got.filter((r) => !seen.has(r.posting_id));
       if (!fresh.length) return;
       for (const r of fresh) {
@@ -270,16 +300,21 @@ server.registerTool('nuworks_get_posting', {
   const url = postingUrl(id);
   let res = null; let stop = null;
   await withBrowser(async (page) => {
+    const api = page.waitForResponse((r) => { try { const u = new URL(r.url()); const m = u.host === BASE_HOST && u.pathname.match(POSTING_API); return !!m && m[1] === id; } catch { return false; } },
+      { timeout: 20000 }).then((r) => r.json()).catch(() => null);
     stop = await load(page, url);
     if (stop) return;
-    res = await page.evaluate(extractPosting);
+    const dom = await page.evaluate(extractPosting);
+    const fromApi = postingFromApi(await apiWithin(api)) || {};
+    res = { ...dom, ...Object.fromEntries(Object.entries(fromApi).filter(([, v]) => v)) };
   });
   if (stop) return refuse(`Stopped: ${stop}`);
   touched.add(id);
   const out = { posting_id: id, url, title: res.title || '', employer: res.employer || '', location: res.location || '',
     position_type: res.position_type || '', description: res.description || '', qualifications: res.qualifications || '',
     application_instructions: res.application_instructions || '', documents_required: res.documents_required || '',
-    deadline: res.deadline || '', applicant_type_message: res.applicant_type_message || '' };
+    deadline: res.deadline || '', applicant_type_message: res.applicant_type_message || '', dates: res.dates || '',
+    work_term: res.work_term || '', workplace: res.workplace || '', pay: res.pay || '', work_authorization: res.work_authorization || '' };
   cachePut(id, out);
   return text({ ...out, from_cache: false });
 }));

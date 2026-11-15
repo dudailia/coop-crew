@@ -1,0 +1,37 @@
+From: NUworks <nuworks-alerts@example.com>
+To: Avery Example <avery.example@example.com>
+Subject: NUworks: 2 new jobs for your search agent "Data co-op"
+Date: Fri, 13 Nov 2026 07:02:11 -0500
+Message-ID: <alert-0001@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="b1"
+
+--b1
+Content-Type: text/plain; charset=utf-8
+
+New jobs matching your search agent "Data co-op".
+Data Analyst Co-op - Example Analytics Inc. - Boston, MA
+
+--b1
+Content-Type: text/html; charset=utf-8
+
+<html><head><style>.x{color:red}</style></head><body>
+<p>Hello Avery,</p>
+<p>These new jobs match your search agent "Data co-op".</p>
+<table>
+<tr><td><a href="https://example-csm.symplicity.com/students/app/jobs/detail/0123456789abcdef0123456789abcdef">Data Analyst Co-op</a></td></tr>
+<tr><td>Example Analytics Inc.</td></tr>
+<tr><td>Boston, MA</td></tr>
+<tr><td>Deadline: Dec 15, 2026</td></tr>
+<tr><td><a href="https://example-csm.symplicity.com/students/app/jobs/detail/0123456789abcdef0123456789abcdef">View</a></td></tr>
+<tr><td><a href="https://example-csm.symplicity.com/students/app/jobs/detail/fedcba9876543210fedcba9876543210">Machine Learning Engineering Co-op</a></td></tr>
+<tr><td>Employer: Example Robotics LLC</td></tr>
+<tr><td>Location: Remote</td></tr>
+<tr><td>Apply by: 01/08/2027</td></tr>
+</table>
+<p><a href="https://example-csm.symplicity.com/students/app/jobs/search">View all jobs</a> |
+<a href="https://example-csm.symplicity.com/students/app/agents">Manage your search agents</a> |
+<a href="https://example-csm.symplicity.com/unsubscribe?u=abc123def456">Unsubscribe</a></p>
+</body></html>
+
+--b1--

@@ -2,7 +2,7 @@
 
 A multi-agent co-op and internship search for students, built on [Claude Code](https://claude.com/claude-code).
 You answer an interview about your major, co-op cycle and goals. Then a crew of agents finds roles on company job
-boards (and, if you turn it on, in NUworks), researches each company, writes a one-page ATS resume and the answers each
+boards and in your NUworks job-alert emails, researches each company, writes a one-page ATS resume and the answers each
 application asks for, prepares the application and any outreach email, and reads your inbox for replies.
 
 **Nothing is submitted or sent without your approval of that exact item.** You spend about 20 minutes a day reading
@@ -48,7 +48,7 @@ a minute, and prints one next step. Details in [GUIDE.md](GUIDE.md).
                                   |
      +-------------+--------------+---------------+
      |             |                              |
- scout-web    scout-nuworks (MCP, read-only)   inbox (read-only)
+ scout-web    scout-nuworks (optional, off)    inbox (read-only; NUworks alerts + saved postings)
      \             /                              |
       \           /                          needs-reply.html
        screener (KEEP / HOLD / DQ, eligibility, locks, banned check)
@@ -78,9 +78,17 @@ Twelve agents in `.claude/agents/`, six skills in `.claude/skills/`, the command
   and blocks every acting tool call while the kill switch is on.
 - Every number and name in outgoing text must be in your `profile/facts.md` (or the posting): the checker and the resume
   build fail otherwise. Work authorization is your sentence, word for word, per country.
-- No LinkedIn automation, no aggregators, no scraping behind logins. NUworks is read only, through a local server that
-  has no apply, message, upload or edit tools. It is approved by the Northeastern co-op office for read-only use and is
-  **off by default**: each student turns it on themselves ([mcp/nuworks/APPROVAL.md](mcp/nuworks/APPROVAL.md)).
+- No LinkedIn automation, no aggregators, no scraping behind logins. **NUworks, by default, comes only from your own
+  email and files**: the inbox agent reads NUworks job-alert emails (from your saved searches) and postings you save
+  into `data/nuworks-import/`; no NUworks page is loaded. You apply in NUworks yourself.
+- The optional NUworks browser reader (`mcp/nuworks`, read-only, no apply, message, upload or edit tools) is **off by
+  default**. Symplicity's terms of use, which govern NUworks, say users may not use "automated software, tools, devices,
+  agents, scripts robots [...] (including, but not limited to, browsers, spiders, robots, avatars or intelligent agents)
+  to navigate, search, access, "scrape," "crawl," or "spider" any web pages" other than through Symplicity's own search
+  agents and ordinary browsers, or "access the Site, using automated means [...] without our prior permission". The
+  Northeastern co-op office approved read-only use, but that is not Symplicity's permission. A student who still wants it
+  turns it on themselves, after that notice, by typing an acknowledgement
+  ([mcp/nuworks/APPROVAL.md](mcp/nuworks/APPROVAL.md), [GUIDE.md](GUIDE.md#nuworks)).
 - Questions that ask you to confirm an answer is your own work written without AI are never drafted.
 - Your data stays on your machine: `profile/`, `data/`, `out/` and the pages are never committed.
 
@@ -89,7 +97,7 @@ More in [SECURITY.md](SECURITY.md).
 ## Tests
 
 ```
-python3 -m unittest discover -s tests -v     # SPEC section 10, in code (25 tests)
+python3 -m unittest discover -s tests -v     # SPEC section 10 in code, guard, NUworks default path
 npm run test:nuworks                         # the NUworks server against a local fake site
 tests/acceptance_fresh_install.sh            # fresh clone + empty HOME: install and demo, timed
 tests/acceptance_linux_docker.sh             # the same install on Ubuntu (WSL stand-in) + the .eml adapter
@@ -99,5 +107,5 @@ python3 -I tools/pii_scan.py                 # personal-data scan of the tree an
 ## Credits
 
 MIT licensed ([LICENSE](LICENSE)). Built on jev-job-search by Qendrim Beka (MIT), job-agents-kit, and the
-job-applications and anti-slop skills by the author (MIT, with his permission). See [THIRD_PARTY.md](THIRD_PARTY.md). Not affiliated
+job-applications and anti-slop skills (MIT, contributed with the author's permission). See [THIRD_PARTY.md](THIRD_PARTY.md). Not affiliated
 with Northeastern University or Symplicity.

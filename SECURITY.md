@@ -20,8 +20,10 @@ All of it under the repo folder, all of it gitignored, none of it uploaded by co
 
 - `profile/` (settings, facts, locks, voice, base resume), `assets/cv.pdf`
 - `data/pipeline.sqlite` (roles, applications, emails, approvals, events), `data/incoming/`, `data/outbox/` (`.eml`)
-- `data/nuworks/browser-profile/` (the NUworks browser session; the password is never seen or stored by coop-crew: the
-  student types it into NUworks's own sign-in page)
+- `data/nuworks-alerts/`, `data/nuworks-import/` (NUworks job-alert emails and postings the student saved)
+- `data/nuworks/browser-profile/` and `data/nuworks/storage-state.json` (mode 600), only if the student turned the
+  optional NUworks browser reader on: the browser session and its cookies. The password is never seen or stored by
+  coop-crew: the student types it into NUworks's own sign-in page
 - `out/<role>/` (postings, briefs, resumes, answers), `logs/`, the HTML and Markdown pages
 - `vendor/jev/src/data/` (jev's copy of the profile)
 

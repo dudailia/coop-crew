@@ -11,7 +11,7 @@
 # Classification: `claude -p` on the claude.ai subscription login only (never an API key); keyword heuristics if unavailable.
 # Holds logs/night.lock while Mail is in use so the night job never quits Mail under it. ~/STOP-AGENTS stops it.
 # usage: python3 -I tools/email_audit.py [--force-window] [--rebuild]
-import concurrent.futures as cf, datetime as dt, email.utils, fcntl, html, json, os, re, subprocess, sys, time, urllib.parse, zoneinfo
+import concurrent.futures as cf, datetime as dt, email.utils, fcntl, hashlib, html, json, os, re, subprocess, sys, time, urllib.parse, zoneinfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crew as K
@@ -97,6 +97,37 @@ on run argv
   end tell
   return out
 end run"""
+
+# NUworks job alerts (the default NUworks path): the raw source of alert emails, matched by sender only, saved as .eml in
+# data/nuworks-alerts/ for tools/nuworks_alerts.py. READ-ONLY: reads `message id` and `source`, nothing else.
+SAVE_ALERTS = """on run argv
+  set cutoff to (current date) - ((item 1 of argv) as integer)
+  set pat to item 2 of argv
+  set out to ""
+  set n to 0
+  tell application "Mail"
+    set ms to (every message of inbox whose date received > cutoff and sender contains pat)
+    repeat with m in ms
+      if n is greater than or equal to 40 then exit repeat
+      set out to out & (message id of m) & (ASCII character 31) & (source of m) & (ASCII character 30)
+      set n to n + 1
+    end repeat
+  end tell
+  return out
+end run"""
+def save_nuworks_alerts(secs):
+    pats = (K.S.get('nuworks') or {}).get('alert_senders') or ['symplicity.com']
+    d = f'{K.DATA}/nuworks-alerts'; os.makedirs(d, exist_ok=True); n = 0
+    for pat in pats:
+        for rec in osa(SAVE_ALERTS, str(secs), pat, timeout=600).split(RS):
+            if US not in rec: continue
+            mid, src = rec.split(US, 1); src = src.strip('\n')
+            if not src.strip(): continue
+            f = f"{d}/{hashlib.sha1(mid.strip().encode()).hexdigest()[:16]}.eml"
+            if os.path.exists(f): continue
+            with open(f, 'w', encoding='utf-8') as fh: fh.write(src.replace('\r\n', '\n').replace('\r', '\n'))
+            n += 1
+    return n
 
 # metadata of messages since N seconds ago; one Apple event per property (bulk), recipients per message for Sent only
 FETCH = """on t(x)
@@ -412,6 +443,13 @@ try:
             rows.append({'ix': f[7].strip() if len(f) > 7 else '', 'id': mid_.strip(), 'mid': mid.strip(), 'sender': snd, 'subject': subj, 'date': now + dt.timedelta(seconds=int(off)),
                          'replied': rp.strip() == 'true', 'to': [a.strip().lower() for a in rc.split(',') if a.strip()]})
         return rows
+
+    # ---------- 1b. NUworks job-alert emails (sourcing mode "nuworks+external" only) ----------
+    if K.SOURCING == 'nuworks+external' and not stop_now():
+        try:
+            nal = save_nuworks_alerts(secs)
+            if nal: log(f'nuworks alerts: {nal} new alert email(s) saved to data/nuworks-alerts/')
+        except Exception as e: errors.append(f'nuworks alerts: {e}')
 
     # ---------- 2. Sent (from any device: server accounts keep phone sends too) ----------
     nsent = 0

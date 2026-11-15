@@ -5,7 +5,7 @@ the student before anything is built.
 
 ## Commute and office
 - On-site or hybrid only in Boston, New York or the San Francisco Bay Area (San Francisco, San Jose, Mountain View); remote anywhere in the US.
-- At most 4 office days a week.
+- Full-time in the office is fine (co-ops are usually on-site five days a week); hybrid and remote are fine too.
 
 ## Eligibility
 - US citizen: citizenship-only roles are fine. Roles that need an active security clearance are DQ (the student has none).
