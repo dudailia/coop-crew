@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>coop-crew: the night shift for your co-op search</title>
+<!--
+  Talk deck for coop-crew. One self-contained file: no network requests, so it works with no Wi-Fi.
+  Fonts are ones macOS ships (Iowan Old Style, Avenir Next, SF Mono / Menlo); other systems fall back to similar faces.
+  Keys: Right / Space / PageDown = next, Left / PageUp = back, Home / End, F = full screen. Click the right half to
+  advance, the left half to go back. Images are the bundled sample student (made up); no personal data.
+-->
+<style>
+/* ===========================================
+   THEME (change these to restyle the whole deck)
+   =========================================== */
+:root {
+  --stage-bg: #070b12;
+  --slide-bg: #0d1522;
+  --panel: #142033;
+  --panel-2: #1a2940;
+  --line: #2a3c58;
+  --ink: #f4ecdc;          /* warm paper white */
+  --muted: #a3b0c2;
+  --lamp: #ffb547;         /* desk-lamp amber: the accent */
+  --lamp-soft: rgba(255, 181, 71, 0.16);
+  --go: #86dca8;           /* approved */
+  --stop: #ff7a66;         /* blocked / kill switch */
+  --font-display: "Iowan Old Style", "Charter", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-body: "Avenir Next", "Avenir", "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", "Menlo", "Consolas", "DejaVu Sans Mono", monospace;
+  --pad: 120px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES (viewport-base.css, in full)
+   =========================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ===========================================
+   ATMOSPHERE: a lamp glow and a faint dot grid on every slide
+   =========================================== */
+.slide {
+  background:
+    radial-gradient(1200px 700px at 8% -10%, rgba(255, 181, 71, 0.13), transparent 60%),
+    radial-gradient(900px 600px at 110% 120%, rgba(134, 220, 168, 0.06), transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(244, 236, 220, 0.06) 1.2px, transparent 1.4px) 0 0 / 48px 48px,
+    var(--slide-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  padding: var(--pad) var(--pad) 100px;
+}
+.slide::after {            /* deck chrome: name and slide number, bottom corners */
+  content: "coop-crew";
+  position: absolute; left: var(--pad); bottom: 48px;
+  font: 600 24px/1 var(--font-mono); letter-spacing: 0.08em; color: rgba(163, 176, 194, 0.55);
+}
+.num { position: absolute; right: var(--pad); bottom: 44px; font: 600 24px/1 var(--font-mono); color: rgba(163, 176, 194, 0.55); }
+
+/* ===========================================
+   TYPE
+   =========================================== */
+.kicker { font: 600 30px/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lamp); margin-bottom: 36px; }
+h1 { font: 600 150px/0.98 var(--font-display); letter-spacing: -0.02em; }
+h2 { font: 600 96px/1.02 var(--font-display); letter-spacing: -0.015em; margin-bottom: 56px; }
+.lead { font: 400 46px/1.35 var(--font-body); color: var(--muted); max-width: 1500px; }
+.big { font: 500 52px/1.32 var(--font-body); }
+.mono { font-family: var(--font-mono); }
+em.hl { font-style: normal; color: var(--lamp); }
+.go { color: var(--go); } .stop { color: var(--stop); }
+
+/* ===========================================
+   REVEAL (staggered, only on the active slide)
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.slide.visible .reveal.d1 { transition-delay: 0.08s; } .slide.visible .reveal.d2 { transition-delay: 0.18s; }
+.slide.visible .reveal.d3 { transition-delay: 0.28s; } .slide.visible .reveal.d4 { transition-delay: 0.38s; }
+.slide.visible .reveal.d5 { transition-delay: 0.48s; } .slide.visible .reveal.d6 { transition-delay: 0.58s; }
+.slide.visible .reveal.d7 { transition-delay: 0.68s; } .slide.visible .reveal.d8 { transition-delay: 0.78s; }
+.slide.visible .reveal.d9 { transition-delay: 0.88s; } .slide.visible .reveal.d10 { transition-delay: 0.98s; }
+
+/* ===========================================
+   SLIDE 1: TITLE
+   =========================================== */
+.title-slide { display: flex; flex-direction: column; justify-content: center; }
+.title-slide h1 { max-width: 1500px; }
+.title-slide h1 .moon { color: var(--lamp); }
+.title-slide .lead { margin-top: 48px; }
+.lamp-line { width: 220px; height: 6px; background: var(--lamp); border-radius: 3px; margin-bottom: 56px; box-shadow: 0 0 40px var(--lamp); }
+
+/* ===========================================
+   SLIDE 2: THE PROBLEM (a stack of repeated chores)
+   =========================================== */
+.chores { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; margin-top: 8px; }
+.chore { background: var(--panel); border: 2px solid var(--line); border-radius: 22px; padding: 34px 40px; font: 500 44px/1.25 var(--font-body); }
+.chore .times { display: block; font: 600 28px/1 var(--font-mono); color: var(--lamp); margin-bottom: 14px; letter-spacing: 0.06em; }
+
+/* ===========================================
+   SLIDE 3: THE CREW (agent diagram)
+   =========================================== */
+.diagram { position: relative; height: 640px; }
+.node { position: absolute; background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 20px 26px; font: 600 34px/1.1 var(--font-mono); text-align: center; }
+.node small { display: block; margin-top: 8px; font: 500 24px/1.2 var(--font-body); color: var(--muted); }
+.node.you { border-color: var(--lamp); background: var(--lamp-soft); color: var(--lamp); }
+.node.page { border-color: var(--go); color: var(--go); }
+.node.dim { border-style: dashed; color: var(--muted); }
+.arrow { position: absolute; height: 4px; background: var(--line); }
+.arrow::after { content: ""; position: absolute; right: -2px; top: -9px; border: 11px solid transparent; border-left: 16px solid var(--line); border-right: 0; }
+.vline { position: absolute; width: 4px; background: var(--line); }
+.legend { position: absolute; left: 0; bottom: 0; font: 500 30px/1.4 var(--font-body); color: var(--muted); }
+
+/* ===========================================
+   SLIDE 4: ONE NIGHT (timeline)
+   =========================================== */
+.night { display: grid; grid-template-columns: 190px 1fr; row-gap: 12px; column-gap: 40px; align-items: baseline; }
+.night .t { font: 600 36px/1 var(--font-mono); color: var(--lamp); text-align: right; }
+.night .t.you { color: var(--go); }
+.night .e { font: 500 34px/1.25 var(--font-body); }
+.night .e .who { font: 600 27px/1 var(--font-mono); color: var(--muted); margin-right: 14px; }
+.night .gap { grid-column: 1 / span 2; height: 2px; background: linear-gradient(90deg, transparent, var(--line), transparent); margin: 2px 0; }
+.foot { position: absolute; left: var(--pad); right: var(--pad); bottom: 92px; font: 500 26px/1.35 var(--font-body); color: var(--muted); }
+
+/* ===========================================
+   SLIDES WITH A SCREENSHOT (review page, resume)
+   =========================================== */
+.split { display: grid; grid-template-columns: 1fr 980px; gap: 72px; height: 820px; }
+.split.r { grid-template-columns: 1fr 820px; }
+.shot { position: relative; border-radius: 22px; overflow: hidden; border: 2px solid var(--line); box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55); background: #fff; height: 820px; }
+.shot img { display: block; width: 100%; height: auto; max-height: none; }
+.shot::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; background: linear-gradient(transparent, rgba(13, 21, 34, 0.95)); }
+.points { display: flex; flex-direction: column; gap: 30px; }
+.point { font: 500 40px/1.3 var(--font-body); padding-left: 36px; border-left: 6px solid var(--lamp); }
+.point b { color: var(--ink); font-weight: 700; }
+.point span { color: var(--muted); }
+
+/* ===========================================
+   SLIDE 6: SAFETY (four tiles)
+   =========================================== */
+.tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 36px; }
+.tile { background: var(--panel); border: 2px solid var(--line); border-radius: 24px; padding: 40px 46px; min-height: 290px; }
+.tile .label { font: 600 28px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+.tile p { font: 500 40px/1.3 var(--font-body); }
+.tile code, .cmd { font-family: var(--font-mono); color: var(--lamp); }
+
+/* ===========================================
+   SLIDE 7: NUWORKS
+   =========================================== */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.col { background: var(--panel); border: 2px solid var(--line); border-radius: 24px; padding: 44px 48px; }
+.col.on { border-color: var(--go); }
+.col.off { border-style: dashed; }
+.col h3 { font: 600 52px/1.1 var(--font-display); margin-bottom: 26px; }
+.col ul { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+.col li { font: 500 36px/1.3 var(--font-body); padding-left: 40px; position: relative; }
+.col li::before { content: "→"; position: absolute; left: 0; color: var(--lamp); }
+.quote { margin-top: 30px; font: italic 400 32px/1.35 var(--font-display); color: var(--muted); border-left: 5px solid var(--stop); padding-left: 26px; }
+
+/* ===========================================
+   SLIDE 9: RESULTS (numbers you can check in the repo)
+   =========================================== */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; }
+.stat { background: var(--panel); border: 2px solid var(--line); border-radius: 24px; padding: 28px 38px; }
+.stat .n { font: 600 84px/1 var(--font-display); color: var(--lamp); }
+.stat .n.go { color: var(--go); }
+.stat .d { margin-top: 12px; font: 500 30px/1.25 var(--font-body); color: var(--ink); }
+.stat .s { margin-top: 10px; font: 500 24px/1.3 var(--font-mono); color: var(--muted); }
+
+/* ===========================================
+   SLIDE 10-11: INSTALL / NEEDS
+   =========================================== */
+.terminal { background: #05080d; border: 2px solid var(--line); border-radius: 22px; padding: 56px 60px; font: 500 46px/1.5 var(--font-mono); color: var(--ink); box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5); }
+.terminal .p { color: var(--go); }
+.terminal .c { color: var(--muted); }
+.steps { display: flex; gap: 36px; margin-top: 56px; }
+.step { flex: 1; font: 500 38px/1.3 var(--font-body); color: var(--muted); }
+.step b { display: block; font: 600 46px/1.2 var(--font-mono); color: var(--lamp); margin-bottom: 12px; }
+.needs { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 60px; }
+.need { display: flex; gap: 28px; align-items: baseline; font: 500 42px/1.3 var(--font-body); }
+.need .k { flex: 0 0 auto; font: 600 30px/1 var(--font-mono); color: var(--lamp); width: 70px; }
+.need span { color: var(--muted); }
+
+/* ===========================================
+   SLIDE 12: QR
+   =========================================== */
+.qr-wrap { display: grid; grid-template-columns: 620px 1fr; gap: 100px; align-items: center; height: 760px; }
+.qr { background: #fff; border-radius: 28px; padding: 22px; width: 620px; height: 620px; box-shadow: 0 0 0 6px var(--lamp), 0 0 90px rgba(255, 181, 71, 0.35); }
+.qr svg { width: 576px; height: 576px; display: block; }
+.url { font: 600 58px/1.25 var(--font-mono); color: var(--ink); word-break: break-all; }
+
+/* ===========================================
+   SLIDE 13: QUESTIONS
+   =========================================== */
+.q-slide { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.q-slide h1 { font-size: 220px; }
+
+/* ===========================================
+   PRESENTER CHROME (outside the stage)
+   =========================================== */
+.progress { position: fixed; left: 0; bottom: 0; height: 5px; background: var(--lamp); transition: width 0.4s var(--ease); z-index: 1000; }
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- === 1. TITLE === -->
+<section class="slide title-slide">
+  <div class="lamp-line reveal d1"></div>
+  <div class="kicker reveal d1">a crew of Claude Code agents for one co-op student</div>
+  <h1 class="reveal d2">The night shift for your <span class="moon">co-op search</span></h1>
+  <p class="lead reveal d3">It finds the roles, researches the companies and prepares every application overnight. Nothing is submitted or sent until you approve that exact item.</p>
+  <div class="num">1</div>
+</section>
+
+<!-- === 2. THE PROBLEM === -->
+<section class="slide">
+  <div class="kicker reveal d1">the problem</div>
+  <h2 class="reveal d1">Co-op search is the same chores, again and again</h2>
+  <div class="chores">
+    <div class="chore reveal d2"><span class="times">every posting</span>Read it, check the dates, the place, the work authorization</div>
+    <div class="chore reveal d3"><span class="times">every company</span>Find out what they do and who to write to</div>
+    <div class="chore reveal d4"><span class="times">every application</span>A tailored one-page resume and the same twenty fields, typed again</div>
+    <div class="chore reveal d5"><span class="times">every email</span>A short note, the right send time, a follow-up you will forget</div>
+  </div>
+  <div class="num">2</div>
+</section>
+
+<!-- === 3. THE CREW === -->
+<section class="slide">
+  <div class="kicker reveal d1">the crew</div>
+  <h2 class="reveal d1" style="margin-bottom:36px">Twelve agents, one page for you</h2>
+  <div class="diagram">
+    <!-- top: you and the conductor -->
+    <div class="node you reveal d2" style="left:0;top:0;width:300px">you<small>/setup /run /approve</small></div>
+    <div class="arrow reveal d2" style="left:310px;top:52px;width:110px"></div>
+    <div class="node reveal d2" style="left:440px;top:0;width:380px">conductor<small>the main Claude Code session</small></div>
+    <div class="node dim reveal d2" style="left:860px;top:0;width:300px">onboarder<small>your profile</small></div>
+    <div class="node dim reveal d3" style="left:1200px;top:0;width:480px">inbox · tracker<small>replies, deadlines, NUworks alerts</small></div>
+    <!-- main pipeline -->
+    <div class="vline reveal d3" style="left:628px;top:118px;height:42px"></div>
+    <div class="node reveal d3" style="left:0;top:170px;width:300px">scout-web<small>company boards</small></div>
+    <div class="node dim reveal d3" style="left:0;top:300px;width:300px">scout-nuworks<small>optional, off</small></div>
+    <div class="arrow reveal d4" style="left:310px;top:222px;width:60px"></div>
+    <div class="node reveal d4" style="left:390px;top:170px;width:280px">screener<small>KEEP · HOLD · DQ</small></div>
+    <div class="arrow reveal d5" style="left:680px;top:222px;width:60px"></div>
+    <div class="node reveal d5" style="left:760px;top:170px;width:280px">researcher<small>company brief</small></div>
+    <div class="arrow reveal d6" style="left:1050px;top:222px;width:60px"></div>
+    <div class="node reveal d6" style="left:1130px;top:170px;width:250px">tailor<small>resume, answers</small></div>
+    <div class="arrow reveal d7" style="left:1390px;top:222px;width:60px"></div>
+    <div class="node reveal d7" style="left:1470px;top:170px;width:210px">editor<small>anti-slop</small></div>
+    <div class="vline reveal d8" style="left:1574px;top:288px;height:52px"></div>
+    <div class="node reveal d8" style="left:1300px;top:350px;width:380px">gatekeeper<small>review pack</small></div>
+    <div class="vline reveal d9" style="left:1488px;top:468px;height:42px"></div>
+    <div class="node page reveal d9" style="left:1300px;top:520px;width:380px">TODAY.html<small>you approve or skip</small></div>
+    <!-- doors that only open on approval -->
+    <div class="node reveal d10" style="left:390px;top:420px;width:360px;border-color:var(--go)">applicant<small>submits approved forms</small></div>
+    <div class="node reveal d10" style="left:790px;top:420px;width:360px;border-color:var(--go)">outreach<small>drafts emails, plans sends</small></div>
+    <p class="legend reveal d10" style="left:390px;top:560px;width:820px">Green doors open only for ids you approved.</p>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- === 4. ONE NIGHT === -->
+<section class="slide">
+  <div class="kicker reveal d1">one night in the life · an example</div>
+  <h2 class="reveal d1" style="margin-bottom:30px;font-size:84px">00:40 to 07:30</h2>
+  <div class="night">
+    <div class="t you reveal d2">00:40</div><div class="e reveal d2"><span class="who">you</span><span class="mono">/approve quillstack-…</span>: the applicant re-checks that one form, then submits it</div>
+    <div class="t you reveal d2">00:42</div><div class="e reveal d2"><span class="who">you</span>approve one email: it waits for its send window</div>
+    <div class="gap reveal d3"></div>
+    <div class="t reveal d3">06:30</div><div class="e reveal d3"><span class="who">schedule</span>starts <span class="mono">/run</span>, headless, on your own Claude plan</div>
+    <div class="t reveal d4">06:31</div><div class="e reveal d4"><span class="who">inbox</span>replies, deadlines, interview invites, NUworks alert emails</div>
+    <div class="t reveal d5">06:35</div><div class="e reveal d5"><span class="who">scouts</span>company boards: Greenhouse, Ashby, Lever, careers pages</div>
+    <div class="t reveal d6">06:45</div><div class="e reveal d6"><span class="who">screener</span>dates, place, work authorization, pay, your locks</div>
+    <div class="t reveal d7">06:55</div><div class="e reveal d7"><span class="who">researcher · tailor · editor</span>brief, one-page resume, answers</div>
+    <div class="t reveal d8">07:15</div><div class="e reveal d8"><span class="who">gatekeeper · tracker</span>review packs into TODAY.html, MORNING.md</div>
+    <div class="t you reveal d9">07:30</div><div class="e reveal d9"><span class="who">you</span>twenty minutes with coffee: approve or skip</div>
+  </div>
+  <p class="foot reveal d10">Times are an example; the 06:30 run is the optional schedule. Approved emails go out only in their region's weekday window (Boston 08:00 to 08:50 for the sample student), or wait as drafts in prepare mode.</p>
+  <div class="num">4</div>
+</section>
+
+<!-- === 5. THE REVIEW PAGE === -->
+<section class="slide">
+  <div class="split">
+    <div>
+      <div class="kicker reveal d1">the review page</div>
+      <h2 class="reveal d1">One page, every morning</h2>
+      <div class="points">
+        <div class="point reveal d2"><b>Questions for you</b> <span>(HOLD) when a role might break a lock</span></div>
+        <div class="point reveal d3"><b>Review packs</b> <span>brief, resume, answers, soft flags, field log</span></div>
+        <div class="point reveal d4"><b>Approve</b> or <b>Skip</b> <span>by id, nothing else moves</span></div>
+      </div>
+    </div>
+    <div class="shot reveal d3"><img alt="TODAY.html for the sample student: a HOLD question and one review pack" src="data:image/jpeg;base64,{{TODAY_JPG}}"></div>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<!-- === 6. SAFETY === -->
+<section class="slide">
+  <div class="kicker reveal d1">safety, in code</div>
+  <h2 class="reveal d1" style="margin-bottom:44px">Nothing leaves without you</h2>
+  <div class="tiles">
+    <div class="tile reveal d2"><div class="label" style="color:var(--lamp)">prepare mode</div><p>Forms are filled, emails drafted. Sending mode is a setting you change yourself.</p></div>
+    <div class="tile reveal d3"><div class="label go">approval of that exact id</div><p><code>/approve id</code> or <code>APPROVE.txt</code>. A ready pack is not permission.</p></div>
+    <div class="tile reveal d4"><div class="label stop">kill switch</div><p><code>/stop</code> halts the cycle at its next step; every acting tool call is blocked until <code>/crew-resume</code>.</p></div>
+    <div class="tile reveal d5"><div class="label" style="color:var(--muted)">guard hook</div><p>One door to submit, one to send. Agents cannot approve, edit the pipeline or change the safety files.</p></div>
+  </div>
+  <div class="num">6</div>
+</section>
+
+<!-- === 7. NUWORKS === -->
+<section class="slide">
+  <div class="kicker reveal d1">nuworks, within the rules</div>
+  <h2 class="reveal d1" style="margin-bottom:44px">Your email and your files, not a bot</h2>
+  <div class="two">
+    <div class="col on reveal d2">
+      <h3 class="go">On by default</h3>
+      <ul>
+        <li>NUworks job-alert emails from your saved searches</li>
+        <li>Postings you save as PDF or HTML into <span class="mono">data/nuworks-import/</span></li>
+        <li>You always apply in NUworks yourself</li>
+      </ul>
+    </div>
+    <div class="col off reveal d3">
+      <h3 style="color:var(--muted)">Browser reader: off</h3>
+      <ul>
+        <li>Read-only, kept in the repo, never on by default</li>
+        <li>Turns on only after a terms notice and a typed acknowledgement</li>
+      </ul>
+      <p class="quote">Symplicity's terms bar "automated software, tools, devices, agents, scripts" used to navigate or access the site without permission.</p>
+    </div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<!-- === 8. RESUME AND CHECKER === -->
+<section class="slide">
+  <div class="split r">
+    <div>
+      <div class="kicker reveal d1">the resume and the checker</div>
+      <h2 class="reveal d1">No invented facts</h2>
+      <div class="points">
+        <div class="point reveal d2"><b>One page, ATS-plain</b> <span>the build fails at two</span></div>
+        <div class="point reveal d3"><b>Every number and name</b> <span>must be in your <span class="mono">facts.md</span> or the posting</span></div>
+        <div class="point reveal d4"><b>"40%" and "Google" fail</b> <span>when you never wrote them; "40+" and your real employer pass</span></div>
+        <div class="point reveal d5"><b>Work authorization</b> <span>your sentence, word for word</span></div>
+      </div>
+    </div>
+    <div class="shot reveal d3"><img alt="One-page resume for the sample student, tailored to a software engineering co-op" src="data:image/jpeg;base64,{{RESUME_JPG}}"></div>
+  </div>
+  <div class="num">8</div>
+</section>
+
+<!-- === 9. RESULTS SO FAR === -->
+<section class="slide">
+  <div class="kicker reveal d1">results so far · all checkable in the repo</div>
+  <h2 class="reveal d1" style="margin-bottom:36px">What is built and tested</h2>
+  <div class="stats">
+    <div class="stat reveal d2"><div class="n">12</div><div class="d">agents with one job each</div><div class="s">.claude/agents/</div></div>
+    <div class="stat reveal d3"><div class="n">{{PY_TESTS}}</div><div class="d">acceptance and rule tests</div><div class="s">tests/test_acceptance.py</div></div>
+    <div class="stat reveal d4"><div class="n">{{NU_TESTS}}</div><div class="d">NUworks reader tests on a local fake site</div><div class="s">mcp/nuworks/test/</div></div>
+    <div class="stat reveal d5"><div class="n go">0</div><div class="d">forms submitted and emails sent in a full cycle with no approvals</div><div class="s">test T2</div></div>
+    <div class="stat reveal d6"><div class="n go">1</div><div class="d">form submitted when exactly one id is approved</div><div class="s">test T3</div></div>
+    <div class="stat reveal d7"><div class="n">1 step</div><div class="d">for the kill switch to stop a running cycle</div><div class="s">test T8</div></div>
+  </div>
+  <div class="num">9</div>
+</section>
+
+<!-- === 10. INSTALL === -->
+<section class="slide">
+  <div class="kicker reveal d1">install</div>
+  <h2 class="reveal d1">One line</h2>
+  <div class="terminal reveal d2"><span class="p">$</span> git clone https://github.com/dudailia/coop-crew \<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;&amp; cd coop-crew &amp;&amp; ./install.sh &amp;&amp; claude</div>
+  <div class="steps">
+    <div class="step reveal d3"><b>/demo</b>five minutes on a made-up student</div>
+    <div class="step reveal d4"><b>/setup</b>a thirty-minute interview, your profile</div>
+    <div class="step reveal d5"><b>/run</b>then twenty minutes a day in TODAY.html</div>
+  </div>
+  <div class="num">10</div>
+</section>
+
+<!-- === 11. WHAT YOU NEED === -->
+<section class="slide">
+  <div class="kicker reveal d1">what you need</div>
+  <h2 class="reveal d1" style="margin-bottom:60px">A laptop and a Claude plan</h2>
+  <div class="needs">
+    <div class="need reveal d2"><span class="k">os</span><div>Mac, Linux, or Windows with WSL</div></div>
+    <div class="need reveal d3"><span class="k">ai</span><div>Claude Code on a paid plan <span>(Pro or Max), no API key</span><br><span class="mono" style="font-size:.64em;white-space:nowrap">curl -fsSL https://claude.ai/install.sh | bash</span></div></div>
+    <div class="need reveal d4"><span class="k">sw</span><div>Python 3.9+, Node 18+ <span>(22+ for the form filler)</span>, git</div></div>
+    <div class="need reveal d5"><span class="k">cv</span><div>Your CV as a PDF</div></div>
+    <div class="need reveal d6"><span class="k">opt</span><div>Apple Mail <span>(else .eml drafts you send yourself)</span></div></div>
+    <div class="need reveal d7"><span class="k">time</span><div>30 minutes once, 20 a day</div></div>
+  </div>
+  <div class="num">11</div>
+</section>
+
+<!-- === 12. QR === -->
+<section class="slide">
+  <div class="qr-wrap">
+    <div class="qr reveal d2">{{QR_SVG}}</div>
+    <div>
+      <div class="kicker reveal d1">get it</div>
+      <h2 class="reveal d2">Scan, clone, run /demo</h2>
+      <p class="url reveal d3">github.com/<br>dudailia/coop-crew</p>
+      <p class="lead reveal d4" style="margin-top:40px">MIT licensed. Your data never leaves your laptop.</p>
+    </div>
+  </div>
+  <div class="num">12</div>
+</section>
+
+<!-- === 13. QUESTIONS === -->
+<section class="slide q-slide">
+  <div class="lamp-line reveal d1"></div>
+  <h1 class="reveal d2">Questions?</h1>
+  <p class="lead reveal d3" style="margin-top:40px">github.com/dudailia/coop-crew</p>
+  <div class="num">13</div>
+</section>
+
+</main>
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Fixed 1920x1080 stage scaled to the window; keys, click, touch, wheel; #n in the URL keeps your place on reload.
+   =========================================== */
+class SlidePresentation {
+  constructor() {
+    this.slides = Array.from(document.querySelectorAll('.slide'));
+    this.stage = document.getElementById('deckStage');
+    this.progress = document.getElementById('progress');
+    this.current = 0;
+    this.lastWheel = 0;
+    this.scale(); window.addEventListener('resize', () => this.scale());
+    this.keys(); this.pointer();
+    const n = parseInt((location.hash || '').slice(1), 10);
+    this.show(Number.isFinite(n) ? n - 1 : 0);
+  }
+  scale() {
+    const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    const x = (window.innerWidth - 1920 * f) / 2, y = (window.innerHeight - 1080 * f) / 2;
+    this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+  }
+  keys() {
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); this.show(this.current + 1); }
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); this.show(this.current - 1); }
+      else if (e.key === 'Home') this.show(0);
+      else if (e.key === 'End') this.show(this.slides.length - 1);
+      else if (e.key === 'f' || e.key === 'F') { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+    });
+  }
+  pointer() {
+    document.addEventListener('click', (e) => this.show(this.current + (e.clientX > window.innerWidth / 2 ? 1 : -1)));
+    let sx = null;
+    document.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) > 50) this.show(this.current + (dx < 0 ? 1 : -1));
+    });
+    document.addEventListener('wheel', (e) => {
+      const now = Date.now(); if (now - this.lastWheel < 700 || Math.abs(e.deltaY) < 30) return;
+      this.lastWheel = now; this.show(this.current + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: true });
+  }
+  show(i) {
+    this.current = Math.max(0, Math.min(i, this.slides.length - 1));
+    this.slides.forEach((s, k) => { s.classList.toggle('active', k === this.current); s.classList.toggle('visible', k === this.current); });
+    this.progress.style.width = `${((this.current + 1) / this.slides.length) * 100}%`;
+    history.replaceState(null, '', `#${this.current + 1}`);
+  }
+}
+new SlidePresentation();
+</script>
+</body>
+</html>
