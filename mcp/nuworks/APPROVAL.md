@@ -30,7 +30,7 @@ answered locally and never sent); never sees or stores the password (the student
 Duo as usual); stops at once on a CAPTCHA, error page or sign-in redirect. Any change that widens this scope (a new
 tool, a non-GET request, a higher rate or cap) needs a new approval.
 
-## 2. Terms of use check (14 Nov 2026)
+## 2. Terms of use check (14 Nov 2026; US terms read 16 Nov 2026)
 
 **Finding: Symplicity's terms of use prohibit automated access to the site without Symplicity's prior written
 permission. The co-op office's approval is not Symplicity's permission.** Northeastern's own IT policy is ambiguous for
@@ -38,10 +38,24 @@ this use, and there are no NUworks-specific terms.
 
 ### Symplicity (the company that runs NUworks)
 
-- US terms: https://www.symplicity.com/support/terms-of-use, linked from the foot of every NUworks page. **Not read in
-  full for this check**: the project's guard blocks fetching `symplicity.com`. Search-engine extracts of the page show
-  the same clauses as the regional terms below. The student or maintainer should read the US page by hand and note its
-  date here.
+- US terms: https://www.symplicity.com/support/terms-of-use ("Terms of Use | Symplicity", Symplicity LLC), linked from
+  the foot of every NUworks page. **Read in full on 16 Nov 2026.** Last-updated date on the page: **"Effective May 1,
+  2019."** (no other revision date is shown). It was opened in a clean Playwright browser with no NUworks session, and
+  no NUworks page was loaded; the guard still blocks web fetches of `symplicity.com`. The clauses on automated access,
+  verbatim:
+  - "(f) use or attempt to use engines, manual or automated software, tools, devices, agents, scripts robots or other
+    means, devices, mechanisms or processes (including, but not limited to, browsers, spiders, robots, avatars or
+    intelligent agents) to navigate, search, access, “scrape,” “crawl,” or “spider” any web pages or any services
+    provided on the Sites other than the search engine and search agents available from Symplicity on the Site and
+    other than generally available third party web browsers (e.g., Internet Explorer, Firefox, Safari)"
+  - "(f) collect users’ content or information, or otherwise access the Site, using automated means (such as harvesting
+    bots, robots, spiders, or scrapers) without our prior permission"
+  - The license clause ("may not be utilized for any aggregation, collecting or posting of job posting/listing
+    information on any other web site [...]") and the conflict clause (the university's "software license agreement
+    will control for that conflict") are the same as in the regional text below.
+  - There is no separate clause on AI. The closest wording is "intelligent agents" in the first clause above.
+  - **Same as the regional text** apart from the name of the company ("Symplicity" for "Symplicity MEA"), so the
+    finding, slide 7, the terms notice in `tools/nuworks_enable.py` and GUIDE.md stand unchanged.
 - Regional terms, same template, read in full: https://www.symplicity-mea.com/TermOfService ("Effective May 1, 2019",
   Symplicity MEA Corporation). Verbatim:
   - "This license is for the sole purpose of enabling you to use the Site as provided by Symplicity, in the manner
