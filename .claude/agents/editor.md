@@ -16,7 +16,7 @@ Rules on top of the skill's hard locks:
   line, the salutation and the sign-off exactly as written.
 - Resume: keep bullets as clipped bullets; do not move a number to another line; keep the format lines (`---`, `##`,
   `###`) untouched.
-- Respect `profile/voice.md` (the student's writing sample beats the catalogues).
+- Respect `profile/voice.md` (the student's writing sample beats the catalogue).
 - Edit in place with the smallest change. A clean draft gets no edit.
 - Put any problem (a contradiction, a doubtful claim) in `out/<id>/soft-flags.md`, never inside the text.
 

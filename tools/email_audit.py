@@ -10,12 +10,13 @@
 # this run launched it.
 # Classification: `claude -p` on the claude.ai subscription login only (never an API key); keyword heuristics if unavailable.
 # Holds logs/night.lock while Mail is in use so the night job never quits Mail under it. ~/STOP-AGENTS stops it.
-# usage: python3 -I tools/email_audit.py [--force-window] [--rebuild]
+# usage: python3 -I tools/email_audit.py [--force-window] [--rebuild] [--nuworks-alerts-only]
+#   --nuworks-alerts-only  only save NUworks alert emails (message id and source) to data/nuworks-alerts/, then stop
 import concurrent.futures as cf, datetime as dt, email.utils, fcntl, hashlib, html, json, os, re, subprocess, sys, time, urllib.parse, zoneinfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crew as K
-D = K.ROOT; TZ = K.TZ; A = K.S['audit']
+D = K.STATE; TZ = K.TZ; A = K.S['audit']
 CACHE = f'{K.LOGS}/email-audit-cache.json'; OUT = f'{D}/needs-reply.html'; COUNTS = f'{K.LOGS}/email-audit-counts.json'
 LOG = f'{K.LOGS}/email-audit.log'; STOPFILE = K.STOPFILE
 T0 = time.time(); BUDGET = 27 * 60          # must finish in under 30 minutes
@@ -33,6 +34,7 @@ def stop_now(): return K.stopped()
 now = dt.datetime.now(TZ)
 if stop_now(): log('STOP-AGENTS present: exit'); sys.exit(0)
 REBUILD = '--rebuild' in sys.argv   # redraw needs-reply.html from the cache only: never touches Mail
+ALERTS_ONLY = '--nuworks-alerts-only' in sys.argv   # step 1b alone: reads message id and source of alert emails, nothing else
 if not REBUILD and not K.sender_hours(now) and '--force-window' not in sys.argv:
     log('outside your sender hours: Mail not touched'); sys.exit(0)
 
@@ -413,6 +415,11 @@ if not REBUILD and not mail_running():
 
 errors = []; window_ok = True
 since = (prev_scan - dt.timedelta(hours=LOOKBACK_H)) if prev_scan else now - dt.timedelta(days=FIRST_DAYS)
+if ALERTS_ONLY and not REBUILD:
+    try: nal = save_nuworks_alerts(int((now - since).total_seconds()))
+    except Exception as e: print(f'nuworks alerts: {e}'); finish(1, f'nuworks alerts only: {e}')
+    print(f'nuworks alerts: {nal} new alert email(s) saved to {K.DATA}/nuworks-alerts/ (since {since:%F})')
+    finish(0, f'nuworks alerts only: {nal} new alert email(s) saved')
 try:
     if REBUILD: raise _Skip()
     # ---------- 1. mailboxes and my addresses ----------

@@ -27,8 +27,8 @@ All of it under the repo folder, all of it gitignored, none of it uploaded by co
 - `out/<role>/` (postings, briefs, resumes, answers), `logs/`, the HTML and Markdown pages
 - `vendor/jev/src/data/` (jev's copy of the profile)
 
-No SMTP password, IMAP password, API key or token is stored anywhere. The anti-slop catalogues and jev are fetched from
-pinned sources at install.
+No SMTP password, IMAP password, API key or token is stored anywhere. jev is fetched from a
+pinned commit at install.
 
 ## What can act, and how it is stopped
 

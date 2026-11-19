@@ -1,0 +1,36 @@
+From: NUworks <nuworks-alerts@example.com>
+To: Avery Example <avery.example@example.com>
+Subject: Avery, the latest "Position Type: Co-op" jobs are here
+Date: Wed, 18 Nov 2026 07:03:00 -0500
+Message-ID: <alert-0002@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="b2"
+
+--b2
+Content-Type: text/plain; charset=utf-8
+
+
+
+--b2
+Content-Type: text/html; charset=utf-8
+
+<html><head><style>td{font-family:Arial}</style></head><body>
+<!-- Made-up fixture. Same structure as a real NUworks job-alert email seen through university mail (2026-11): links
+     wrapped in Outlook Safe Links, each pointing at /students/?jobRedirectUrl=<base64 of /app/jobs/detail/<id>>,
+     an empty plain-text part, and an employer line, a "City, Region, Country" line and the position type under each
+     title. Every name, id, title and address in it is invented. -->
+<table>
+<tr><td><p>Avery, here are your latest job matches!</p>
+<p>Don't miss these matches to your "Position Type: Co-op" job alert.</p></td></tr>
+<tr><td style="padding:12px"><a href="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexample-csm.symplicity.com%2Fstudents%2F%3FjobRedirectUrl%3DL2FwcC9qb2JzL2RldGFpbC8xMTExMTExMWFhYWFhYWFhMjIyMjIyMjJiYmJiYmJiYg%253D%253D&amp;data=05%7C02%7Cexample%7C0000&amp;sdata=EXAMPLEEXAMPLE%3D&amp;reserved=0" style="font-weight:bold">Data Engineering Co-op</a><br>
+<span>Example University, Office of Example Research</span><br><span>Boston, Massachusetts, United States</span><br><span>Co-op</span></td></tr>
+<tr><td style="padding:12px"><a href="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexample-csm.symplicity.com%2Fstudents%2F%3FjobRedirectUrl%3DL2FwcC9qb2JzL2RldGFpbC8zMzMzMzMzM2NjY2NjY2NjNDQ0NDQ0NDRkZGRkZGRkZA%253D%253D&amp;data=05%7C02%7Cexample%7C0000&amp;sdata=EXAMPLEEXAMPLE%3D&amp;reserved=0" style="font-weight:bold">Software Developer Co-op (Winter 2027)</a><br>
+<span>Example Mutual, LLP</span><br><span>Toronto, Ontario, Canada</span><br><span>Co-op</span></td></tr>
+<tr><td style="padding:12px"><a href="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexample-csm.symplicity.com%2Fstudents%2F%3FjobRedirectUrl%3DL2FwcC9qb2JzL2RldGFpbC81NTU1NTU1NWVlZWVlZWVlNjY2NjY2NjZmZmZmZmZmZg%253D%253D&amp;data=05%7C02%7Cexample%7C0000&amp;sdata=EXAMPLEEXAMPLE%3D&amp;reserved=0" style="font-weight:bold">Analytics Intern</a><br>
+<span>Sample Retail Group</span><br><span>Multiple Locations</span><br><span>Co-op</span></td></tr>
+<tr><td><a href="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexample-csm.symplicity.com%2Fstudents%2F%3Fs%3Devent%26ss%3Dws%26id%3D77777777gggggggg&amp;reserved=0">RSVP here</a> for the example career fair.</td></tr>
+<tr><td><a href="https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexample-csm.symplicity.com%2Fstudents%2Fapp%2Fjobs%2Fsearch&amp;reserved=0">View all jobs</a></td></tr>
+</table>
+</body></html>
+
+--b2--

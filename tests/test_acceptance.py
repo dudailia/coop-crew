@@ -379,6 +379,23 @@ class NUworks_DefaultPath(unittest.TestCase):
         got = db(self.st).execute("select source, channel from roles").fetchall()
         self.assertEqual([(x['source'], x['channel']) for x in got], [('nuworks', 'nuworks')] * 2)
 
+    def test_alert_through_safe_links_and_job_redirect(self):
+        # made-up email with the structure of a real alert seen through university mail: Outlook Safe Links around
+        # /students/?jobRedirectUrl=<base64 of /app/jobs/detail/<id>>, an empty text part, "City, Region, Country"
+        shutil.copy(f'{FIX}/alert-safelinks.eml', f'{self.st}/data/inbox/alert-safelinks.eml')
+        r = run(self.st, 'nuworks_alerts.py', check=True)
+        self.assertIn('1 alert email(s), 3 postings', r.stdout, 'the RSVP event link and "View all jobs" are not postings')
+        rows = {x['posting_id']: x for x in self.incoming('nuworks-alerts')}
+        a = rows['11111111aaaaaaaa22222222bbbbbbbb']
+        self.assertEqual((a['title'], a['company'], a['location']),
+                         ('Data Engineering Co-op', 'Example University, Office of Example Research', 'Boston, Massachusetts, United States'))
+        self.assertEqual(a['url'], 'https://example-csm.symplicity.com/students/app/jobs/detail/11111111aaaaaaaa22222222bbbbbbbb')
+        b, c = rows['33333333cccccccc44444444dddddddd'], rows['55555555eeeeeeee66666666ffffffff']
+        self.assertEqual((b['company'], b['location']), ('Example Mutual, LLP', 'Toronto, Ontario, Canada'))
+        self.assertEqual((c['company'], c['location']), ('Sample Retail Group', 'Multiple Locations'))
+        self.assertIn('saved search: Position Type: Co-op', a['description'])
+        self.assertFalse(any('safelinks' in x['url'] or 'jobRedirectUrl' in x['url'] for x in rows.values()))
+
     def test_off_outside_nuworks_mode(self):
         st = make_state(mode='external'); os.makedirs(f'{st}/data/inbox')
         shutil.copy(f'{FIX}/alert.eml', f'{st}/data/inbox/alert.eml')
