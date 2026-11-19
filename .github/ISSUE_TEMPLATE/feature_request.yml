@@ -1,0 +1,29 @@
+name: Feature request
+description: An idea that would help students using coop-crew.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is hard or missing today, for a student searching for a co-op?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What should coop-crew do? Anything that submits, sends, reads mail or adds a source of roles will need a design discussion first.
+    validations:
+      required: true
+  - type: checkboxes
+    id: promises
+    attributes:
+      label: It keeps coop-crew's promises
+      options:
+        - label: Nothing is submitted or sent without the student's approval of that exact item.
+          required: true
+        - label: No LinkedIn automation, aggregators, scraping behind logins, or NUworks automation by default.
+          required: true
+        - label: This issue contains no personal data.
+          required: true

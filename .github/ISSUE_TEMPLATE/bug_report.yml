@@ -1,0 +1,46 @@
+name: Bug report
+description: Something in coop-crew did not work as described.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not paste personal data**: no profile, resume, emails, pipeline rows or NUworks pages. Reproduce with the
+        sample student (`/demo`, or `python3 -I tools/demo.py run --offline`) if you can.
+        A safety problem (something submitted, sent or approved without approval, a way around the guard or the kill
+        switch, a data leak) goes to **Security > Report a vulnerability** instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ./install.sh
+        2. claude, then /demo
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of /crew-doctor
+      description: Run `/crew-doctor` (or `python3 -I tools/crew_doctor.py`) and paste the result. Remove anything personal.
+      render: text
+  - type: input
+    id: system
+    attributes:
+      label: System
+      placeholder: macOS 15 / Ubuntu 24.04 / Windows 11 WSL; Python 3.12; Node 22
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This issue contains no personal data.
+          required: true

@@ -53,5 +53,15 @@ pinned commit at install.
 
 ## Reporting a problem
 
-Open an issue without personal data, or contact the maintainer privately. Before every push, run
-`python3 -I tools/pii_scan.py` (with a private pattern file outside the repo) and the test suite.
+**A safety problem** (anything that could submit, send or approve without the student's approval, get around the guard
+or the kill switch, leak personal data, or reach NUworks or LinkedIn): report it privately through GitHub's
+**Security > Report a vulnerability** on the repository page. Please do not open a public issue for these. Expect a
+first answer within a week.
+
+**Anything else**: open an issue. Never paste your profile, resume, emails or pipeline into an issue; describe the
+problem with the bundled sample student (`/demo`) instead.
+
+Supported version: the latest release.
+
+For maintainers: before every push, run `python3 -I tools/pii_scan.py` (with the private pattern file outside the
+repo) and the test suite.
