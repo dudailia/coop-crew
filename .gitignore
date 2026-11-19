@@ -30,3 +30,6 @@ __pycache__/
 
 # the demo video is attached to the GitHub release, not committed (tools/record_demo.sh writes it)
 /docs/talk/demo.mp4
+
+# the LinkedIn post draft names the maintainer: kept local, posted by hand
+/LINKEDIN.md
