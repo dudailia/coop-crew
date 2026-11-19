@@ -6,7 +6,8 @@
 #            roles, run the hard rules; prints the ids left for the screener agent
 #   finish   gate, pages, open TODAY.html, final check that nothing was submitted or sent
 #   run --offline   the whole demo with no agents (stand-ins), for tests and for a room with no Claude access
-# usage: python3 -I tools/demo.py prepare|finish [--no-open] | run --offline [--no-open]
+#   start [--offline]  what /demo runs: prepare, or with --offline (/demo --offline) the whole offline demo
+# usage: python3 -I tools/demo.py prepare|finish [--no-open] | run --offline [--no-open] | start [--offline] [--no-open]
 import json, os, re, shutil, subprocess, sys, time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEMO = f'{ROOT}/demo'
@@ -140,4 +141,5 @@ if __name__ == '__main__':
     if a[0] == 'prepare': prepare('--offline' in a)
     elif a[0] == 'finish': sys.exit(0 if finish('--no-open' in a) else 1)
     elif a[0] == 'run' and '--offline' in a: run_offline('--no-open' in a)
-    else: sys.exit('usage: demo.py prepare [--offline] | finish [--no-open] | run --offline [--no-open]')
+    elif a[0] == 'start': run_offline('--no-open' in a) if '--offline' in a else prepare()
+    else: sys.exit('usage: demo.py prepare [--offline] | finish [--no-open] | run --offline [--no-open] | start [--offline] [--no-open]')

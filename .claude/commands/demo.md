@@ -1,8 +1,13 @@
 ---
 description: A five-minute demo of the crew on a sample student (or your own profile after /setup). Scouts 3 public boards, judges 5 roles, researches 2, builds 1 one-page resume and 1 review pack, opens TODAY.html. Never sends or submits anything.
+argument-hint: "[--offline]"
 disable-model-invocation: true
 ---
-!`python3 -I tools/demo.py prepare`
+!`python3 -I tools/demo.py start $ARGUMENTS`
+
+**`/demo --offline`**: if the output above ends with "(offline demo in ... s)", the whole demo already ran without
+agents (cached boards, rules in code). Do none of the steps below: tell the room in a few lines what the 5 roles were
+and why, which pack is ready, that nothing was submitted or sent, and end with exactly: "Run /setup to make this yours."
 
 You are running the **demo** (CLAUDE.md). State root is `demo/`: every file path below is under `demo/`, and every tool
 runs as `COOP_STATE=demo python3 -I tools/...`. NUworks and email are skipped. Nothing is ever submitted or sent.
