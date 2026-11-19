@@ -1,5 +1,59 @@
 # Overnight report
 
+## 19 November 2026: v1.0 ready to publish, nothing pushed
+
+Nothing was pushed, published, posted or emailed. Tag `v1.0` is on the last commit. `PUBLISH.md` has the exact
+commands; say "publish" and I run them and then check the public repo from a signed-out clone.
+
+**What changed**
+
+- **Licenses.**
+  - The anti-slop skill now uses our own `catalogue.md`. The unlicensed upstream catalogues, their fetch script and
+    `refs.lock` are gone.
+  - The offline demo's cache of real employers' postings is replaced by made-up companies, in the git history too.
+  - THIRD_PARTY.md is rewritten. I kept its existing name, not THIRD-PARTY.md, because the README and the other docs
+    link to it.
+- **NUworks alerts against real Mail**, read-only, outside the repo.
+  - `email_audit.py --nuworks-alerts-only` (new) saved 40 alert emails into a scratch folder.
+  - The parser found **0 postings** in a real alert, so it was broken for real use. Two causes: university mail wraps
+    links in Outlook Safe Links, and NUworks links through a base64 `jobRedirectUrl`. Both are fixed, as are
+    "Northeastern University, ..." employers, non-US places and event links. It now reads 1,431 postings, all with an
+    employer and a location.
+  - A made-up fixture and a test were added, and the scratch copies of your emails were deleted.
+  - Also fixed: the audit wrote `needs-reply.html` to the repo root even when it was run on another state folder.
+- **Commit author.** All commits are rewritten to `239183685+dudailia@users.noreply.github.com`, and the repo's git config
+  uses it. The name stays `dudailia` (ack-guard's commits use your full name; say if you want that here too). Backup bundles are in `logs/`.
+- **Docs.**
+  - The README is rewritten for students who have never used Claude Code, with the demo GIF.
+  - Added CONTRIBUTING.md, private reporting in SECURITY.md, and issue templates.
+  - `/demo --offline` now works from Claude Code.
+
+**What passed**
+
+| Check | Result |
+|---|---|
+| Python tests / NUworks tests | 34/34, 11/11 |
+| Fresh clone: `install.sh`, `/crew-doctor`, `/demo --offline` | install 52 s; 0 problems; 1 pack, 0 submitted, 0 sent; both slash commands also run through `claude -p` |
+| Personal-data scan (16 private patterns) and gitleaks, files and full history | no findings |
+| The two names you listed (and any non-sample email address) | in no file, commit, author or tag |
+| Images, 13 slides, video frames | no logos; page text only |
+| Deck | 34 and 11 tests, QR to github.com/dudailia/coop-crew, 0 network requests |
+
+**Needs you**
+
+1. Say "publish" when you're ready.
+2. **LinkedIn**: I found no existing coop-crew draft, so I wrote a new one in `LINKEDIN.md`. It's local and gitignored,
+   and nothing was posted. Please read it.
+3. The screenshots, the GIF and `demo.mp4` come from the live demo, so they quote real public postings (Klaviyo, Figure,
+   Databricks) as text. There are no logos. If you'd rather show only made-up companies, I can re-shoot them from the
+   offline demo.
+4. Check the Claude Code install line in the README (`curl -fsSL https://claude.ai/install.sh | bash`). I wrote it from
+   memory and didn't fetch the docs.
+5. Disk space was down to 3.9 GB free during the install test.
+6. After publishing, delete `logs/backup-*.bundle`. They hold the old history.
+
+---
+
 ## Update, 16 November 2026 (evening): release v1.0 ready, not pushed
 
 - **Symplicity US terms read** (https://www.symplicity.com/support/terms-of-use), in a clean Playwright browser with no
@@ -68,33 +122,33 @@ video shows only the bundled, made-up sample student.
      word "fetch" in prose, and a heredoc that edits a doc mentioning symplicity.com are no longer blocked. A
      `nuworks` mention needs an actual URL next to curl/wget.
    - 2 new tests (both sides: 31 blocked and 15 allowed commands), run on a patched copy: 33/33.
-2. **Talk deck: `docs/talk/slides.html`** (commit `01f4f0b`). 13 slides: the problem, the crew diagram, one night
+2. **Talk deck: `docs/talk/slides.html`** (commit `a43e4e1`). 13 slides: the problem, the crew diagram, one night
    (00:40 to 07:30), the review page, safety, NUworks within the rules, the resume and checker, results so far,
    install, what you need, the QR code, questions. Arrow keys, space, click, swipe; F for full screen; 16:9 stage;
    type 34 px or larger at 1920×1080; no logos.
    - It is built by `tools/build_slides.py` from `docs/talk/slides.tpl.html`. The QR code (`tools/qr_svg.py`, standard
      library) and the screenshots are inlined.
    - The results slide counts the tests from the test files at build time, so it never claims more than the repo has.
-3. **Demo recording: `tools/record_demo.sh` → `docs/talk/demo.mp4`** (commit `2974fe4`). It runs the live `/demo` (or
+3. **Demo recording: `tools/record_demo.sh` → `docs/talk/demo.mp4`** (commit `e25624d`). It runs the live `/demo` (or
    `--offline`, or `--no-run`), then records TODAY.html, the review pack, the resume and the tracker with on-screen
    captions, then converts to MP4 with ffmpeg.
    - `demo.py` gained `COOP_DEMO_SAMPLE=1`, so a recording always uses the sample student, never a real profile, and
      `COOP_DEMO_NO_OPEN=1`.
    - I watched the frames and fixed two bugs (the HOLD card was taken for the review pack; collapsed sections) before
      the final take.
-4. **Demo script: `docs/talk/DEMO-SCRIPT.md`** (commit `a5a1226`). Two minutes over the video, keyed to its timestamps,
+4. **Demo script: `docs/talk/DEMO-SCRIPT.md`** (commit `ed349b5`). Two minutes over the video, keyed to its timestamps,
    with five fallbacks:
    - the video from disk;
    - the offline demo, which needs no network and no Claude;
    - pre-running `/demo`;
    - a PDF of the deck;
    - the kill switch.
-5. **Attendee note: `docs/talk/BEFORE-THE-TALK.md`** (commit `2fbb9ff`). What to install the day before, how to check
+5. **Attendee note: `docs/talk/BEFORE-THE-TALK.md`** (commit `2e7ddb7`). What to install the day before, how to check
    it (`/crew-doctor`, `/demo`, the offline demo), and 13 common errors with fixes, taken from the installer's real
    messages.
-6. **README** (commit `333ac3a`): a three-line pitch, a fresh TODAY.html screenshot from tonight's demo, the install
+6. **README** (commit `5e78bc1`): a three-line pitch, a fresh TODAY.html screenshot from tonight's demo, the install
    line, "how it works" with a simpler agent diagram, the commands, safety, links to the talk materials.
-7. **Checks and this report.** One fix was needed (commit `d054439`): the personal-data scan read `demo.mp4`'s bytes
+7. **Checks and this report.** One fix was needed (commit `acd1669`): the personal-data scan read `demo.mp4`'s bytes
    as text and matched noise, two "emails" and a private pattern case-insensitively. Video now joins the images and
    PDFs the scanner already skips. I also added a structural test for the QR encoder.
 
