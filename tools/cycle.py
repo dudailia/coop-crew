@@ -59,6 +59,13 @@ def offline_pack(rid, r):
     base = K.read(f'{K.PROFILE}/resume.md') or K.read(f'{K.SAMPLE}/profile/resume.md')
     open(f'{d}/resume.md', 'w', encoding='utf-8').write(re.sub(r'(?m)^title: .*$', f'title: {r["title"]}', base, count=1))
     K.save_json(f'{d}/questions.json', [])
+    open(f'{d}/soft-flags.md', 'w', encoding='utf-8').write(
+        '# Soft flags\n\n'
+        '- Offline mode: the rules in code judged this role, not the screener agent. Check the dates, the place and the '
+        'work in the posting yourself.\n'
+        '- The company brief comes from the posting only; nothing was read from the company\'s own site.\n'
+        '- The portal\'s own questions were not pulled. Open the live form and check it asks nothing else before you '
+        'approve.\n')
     open(f'{d}/answers.md', 'w', encoding='utf-8').write('# Answers\n\n(The portal asked no extra questions in offline mode.)\n')
     open(f'{d}/field-log.md', 'w', encoding='utf-8').write(
         '# Field log\n\n| Field | Value | Source |\n|---|---|---|\n'

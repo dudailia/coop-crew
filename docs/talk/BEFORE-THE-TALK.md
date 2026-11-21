@@ -11,7 +11,7 @@ day before. It takes about 10 minutes, most of it downloads. Bring your laptop c
 | git | `git --version` | Mac: `xcode-select --install`. Ubuntu/WSL: `sudo apt install git` |
 | Python 3.9 or newer | `python3 --version` | Mac: `xcode-select --install`. Ubuntu/WSL: `sudo apt install python3` |
 | Node.js 18 or newer (22+ for the form filler) | `node --version` | nodejs.org, or `nvm install 22` |
-| Claude Code, signed in on a **paid** Claude plan (Pro or Max) | `claude --version` | claude.com/claude-code. Sign in with your Claude account; no API key is needed |
+| Claude Code, signed in on a **paid** Claude plan (Pro or Max) | `claude --version` | `curl -fsSL https://claude.ai/install.sh \| bash` (Windows: inside WSL), from [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup). Open a new terminal, run `claude` and follow the browser prompts to sign in; no API key is needed |
 
 Then, in a terminal (on Windows: inside the WSL Ubuntu terminal, in your Linux home folder, not under `/mnt/c`):
 
@@ -53,7 +53,7 @@ afterwards (about 30 minutes).
 | `Skipping jev-job-search: it needs Node 22+` | Not an error: everything else works. Upgrade Node later and run `vendor/jev/install.sh` |
 | Chromium download fails or hangs | Retry on another network: `npx playwright install chromium` (WSL: `npx playwright install --with-deps chromium`) |
 | `./install.sh: Permission denied` | `bash install.sh` |
-| `claude: command not found` | Install Claude Code (claude.com/claude-code), open a new terminal |
+| `claude: command not found` | Install Claude Code: `curl -fsSL https://claude.ai/install.sh \| bash` ([code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup)), then open a new terminal |
 | `/demo` stops at permission prompts, or the safety hook seems off | Run `claude` in the folder and accept the trust dialog, then try again |
 | `/demo` says your plan has no access | Claude Code needs a paid plan (Pro or Max). Use the offline demo above |
 | `STOP: the kill switch is on` | Type `/crew-resume` |

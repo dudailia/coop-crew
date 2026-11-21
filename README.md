@@ -5,10 +5,10 @@ It finds roles on company job boards and in your NUworks job-alert emails, resea
 one-page resume, the form answers and any outreach email. You read one page in the morning and approve what is right.
 **Nothing is submitted or sent until you approve that exact item.**
 
-![The demo: TODAY.html for a made-up student, a question the crew asks first, a review pack with the company brief, soft flags, the field log, the one-page resume and the tracker](docs/img/demo.gif)
+![The demo: TODAY.html for a made-up student, a review pack with the company brief, soft flags and the field log, the one-page resume and the tracker](docs/img/demo.gif)
 
-*The demo on the bundled sample student (every detail about the student is made up). The full 84-second video, with
-captions, is attached to the [v1.0 release](https://github.com/dudailia/coop-crew/releases/tag/v1.0).*
+*The offline demo on the bundled sample student. The student and every company are made up. The full 78-second video,
+with captions, is attached to the [v1.0 release](https://github.com/dudailia/coop-crew/releases/tag/v1.0).*
 
 ## What it does
 
@@ -44,12 +44,13 @@ You need a Mac, Linux, or Windows with WSL, and a paid Claude plan (Pro or Max).
    - macOS: `xcode-select --install` (gives you git and Python 3), then Node.js 22 from [nodejs.org](https://nodejs.org).
    - Ubuntu or WSL: `sudo apt install git python3`, then Node.js 22 from nodejs.org or `nvm install 22`.
    - Windows: install WSL (`wsl --install` in PowerShell as administrator), then follow the Ubuntu line inside it.
-2. **Install Claude Code** and sign in with your Claude account:
+2. **Install Claude Code** (on Windows, inside the WSL terminal) and sign in with your Claude account:
    ```
    curl -fsSL https://claude.ai/install.sh | bash
-   claude          # first run: choose "Claude account" and sign in in the browser, then type /exit
    ```
-   (Or `npm install -g @anthropic-ai/claude-code`. Details: [claude.com/claude-code](https://claude.com/claude-code).)
+   Open a new terminal and check it with `claude --version`. Then run `claude` once and follow the browser prompts to
+   sign in, and type `/exit`. Other ways to install (Homebrew, npm) are on the official setup page,
+   [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup).
 3. **Get coop-crew and install it** (about a minute):
    ```
    git clone https://github.com/dudailia/coop-crew

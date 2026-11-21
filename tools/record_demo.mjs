@@ -68,7 +68,7 @@ const yOf = (finder) => page.evaluate((f) => {
 }, finder);
 const go = async (finder, ms) => { const y = await yOf(finder); if (y !== null) await glide(y, ms); return y !== null; };
 if (await go('pack', 3000)) {
-  await caption('A review pack: the screener\'s reasons, then a short company brief from the posting and the company\'s own site'); await wait(6500);
+  await caption('A review pack: the screener\'s reasons, then a short company brief'); await wait(6500);
   await go('Soft flags', 4000);
   await caption('Soft flags: anything you should know before you approve'); await wait(5500);
   await go('Field log', 3500);

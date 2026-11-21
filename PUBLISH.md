@@ -16,7 +16,7 @@ python3 -m unittest discover -s tests    # 34 tests, OK
 npm run test:nuworks                     # 11 tests, pass
 python3 -I tools/pii_scan.py             # "no findings" (uses ~/.config/coop-crew/pii-patterns.txt)
 gitleaks git --no-banner .               # "no leaks found"
-ls -l docs/talk/demo.mp4                 # 3540905 bytes; gitignored, attached to the release below
+ls -l docs/talk/demo.mp4                 # 1229869 bytes; gitignored, attached to the release below
 gh auth status                           # signed in to github.com as dudailia
 gh repo view dudailia/coop-crew >/dev/null 2>&1 && echo "STOP: the repo already exists" && exit 1 || true
 ```
