@@ -10,6 +10,8 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 T="$(mktemp -d /tmp/coop-fresh.XXXX)"
 export HOME="$T/home"; mkdir -p "$HOME"
 unset PLAYWRIGHT_BROWSERS_PATH COOP_STATE COOP_JEV COOP_MAIL_ADAPTER
+# A new Mac student has only macOS's own Python (3.9), not a newer one from Homebrew or conda: use it when it is there.
+[ "$(uname)" = Darwin ] && [ -x /usr/bin/python3 ] && export PATH="/usr/bin:$PATH"
 git clone -q "$REPO" "$T/coop-crew"
 cd "$T/coop-crew"
 S=$(date +%s)

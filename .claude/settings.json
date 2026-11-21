@@ -33,8 +33,7 @@
       "Write(logs/suggested-replies.json)",
       "Edit(logs/suggested-replies.json)",
       "Write(demo/logs/suggested-replies.json)",
-      "Edit(demo/logs/suggested-replies.json)",
-      "Bash(cp * assets/cv.pdf)"
+      "Edit(demo/logs/suggested-replies.json)"
     ],
     "deny": [
       "Bash(npx jev submit*)",

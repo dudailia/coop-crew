@@ -13,7 +13,7 @@ until you approve that exact item.
 | A Mac, Linux, or Windows with WSL | Free | On Windows, `install.ps1` runs everything inside WSL (Ubuntu) |
 | Python 3.9+ and git | Free | Mac: `xcode-select --install`. Ubuntu/WSL: `sudo apt install python3 git` |
 | Node.js 18+ (22+ for the form filler) | Free | nodejs.org or `nvm install 22` |
-| Claude Code with a paid Claude plan (Pro or Max) | Plan price | claude.com/claude-code. Signed in with your Claude account; no API key |
+| Claude Code with a paid Claude plan (Pro or Max) | Plan price | `curl -fsSL https://claude.ai/install.sh \| bash` ([code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup)); if it says `~/.local/bin` is not in your PATH, run the line it prints. Signed in with your Claude account; no API key |
 | Your CV as a PDF | | The version you want employers to see |
 | Apple Mail (Mac only, optional) | Free | Otherwise outreach writes `.eml` drafts you send from your own client |
 
@@ -27,16 +27,18 @@ git clone https://github.com/dudailia/coop-crew && cd coop-crew && ./install.sh 
 
 The installer checks Python, Node and git; installs the Node packages and Playwright's Chromium (for resume PDFs and the
 optional NUworks browser reader); installs jev-job-search (the form filler, Node 22+ only) in prepare mode; keeps the
-NUworks browser reader disabled; runs the health check; and prints the next step. On Windows: open PowerShell in the folder and run
-`.\install.ps1`.
+NUworks browser reader disabled; runs the health check; and prints the next step. It downloads about 280 MB and takes 5
+minutes or so on a new machine. On Windows: open PowerShell in the folder and run `.\install.ps1`.
 
-The first time you run `claude` in the folder, accept the trust dialog: the crew's permissions and safety hook load only
-in a trusted folder.
+The first time you run `claude` in the folder, accept the trust dialog: the highlighted answer is "No, exit", so press
+the down arrow to choose "Yes, I trust this folder", then Enter. The crew's permissions and safety hook load only in a
+trusted folder.
 
 ## 2. Try the demo (optional, 5 minutes)
 
 Type `/demo`. The crew scouts three public company boards, judges five roles for a made-up student, researches two,
-builds one resume and one review pack, and opens TODAY.html. It sends and submits nothing.
+builds one resume and one review pack, and opens TODAY.html. It sends and submits nothing. `/demo --offline` does the
+same in seconds, from cached boards and rules in code, with no agents and no network.
 
 ## 3. /setup: the interview
 
@@ -51,7 +53,7 @@ Type `/setup`. The onboarder asks one group at a time, never guesses, and writes
 5. Work authorization, per country: the exact sentence, and sponsorship now and later. F-1 students: the visa type is
    "F-1 CPT", and H-1B is never given as your type.
 6. Targets: role titles, industries, company size, cities, remote/hybrid/on-site, pay floor.
-7. Proof bank: upload your CV; the onboarder lists every job, project, award and skill, and you confirm each line and the
+7. Proof bank: give the path to your CV (a PDF; dragging the file into the terminal pastes its path); the onboarder lists every job, project, award and skill, and you confirm each line and the
    numbers you can defend. Anything you don't confirm is never used.
 8. Locks and never-apply: commute limits, office days, citizenship-only roles, employers to avoid.
 9. Voice: plain or formal, spelling, words to avoid, sign-off, optional writing sample.

@@ -48,10 +48,12 @@ You need a Mac, Linux, or Windows with WSL, and a paid Claude plan (Pro or Max).
    ```
    curl -fsSL https://claude.ai/install.sh | bash
    ```
-   Open a new terminal and check it with `claude --version`. Then run `claude` once and follow the browser prompts to
-   sign in, and type `/exit`. Other ways to install (Homebrew, npm) are on the official setup page,
+   If the installer ends with a note that `~/.local/bin` is not in your PATH (it does on a new Mac), run the one line it
+   prints, for example `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc`. Then open a new
+   terminal and check it with `claude --version`: it prints a version number. Run `claude` once, follow the browser
+   prompts to sign in, and type `/exit`. Other ways to install (Homebrew, WinGet) are on the official setup page,
    [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup).
-3. **Get coop-crew and install it** (about a minute):
+3. **Get coop-crew and install it** (5 minutes or so: it downloads about 280 MB, mostly a browser engine for the PDFs):
    ```
    git clone https://github.com/dudailia/coop-crew
    cd coop-crew
@@ -59,11 +61,14 @@ You need a Mac, Linux, or Windows with WSL, and a paid Claude plan (Pro or Max).
    ```
    The installer checks Python, Node and git, installs what the crew needs, runs a health check and prints one next
    step. On Windows, run `.\install.ps1` in PowerShell instead.
-4. **Start Claude Code in the folder**: type `claude`. When it asks whether you trust this folder, say yes: the crew's
-   permissions and its safety hook load only in a trusted folder.
+4. **Start Claude Code in the folder**: type `claude`. It asks whether you trust this folder and lists the permissions
+   and the hook the folder sets up: those are the crew's allowed tools and its safety guard. The highlighted answer is
+   "No, exit", so press the down arrow to choose **Yes, I trust this folder**, then Enter. The crew's permissions and its
+   safety hook load only in a trusted folder.
 5. **Watch the demo**: type `/demo`. In about five minutes the crew works on a made-up student and opens `TODAY.html`.
-   It submits and sends nothing. No network or no Claude access? Run `python3 -I tools/demo.py run --offline` in a
-   terminal instead: the same pages in a few seconds, from rules in code instead of agents.
+   It submits and sends nothing. Short on time, or the network is slow? Type `/demo --offline`: the same pages in a few
+   seconds, from cached boards and rules in code instead of agents. No Claude access at all? Run
+   `python3 -I tools/demo.py run --offline` in a terminal.
 6. **Make it yours**: type `/setup`. A 30-minute interview, one group of questions at a time (program, co-op dates,
    work authorization, targets, the facts you can defend, your rules, your voice). Then `/run` each morning, or turn
    on the 06:30 schedule at the end of `/setup`.
@@ -84,7 +89,7 @@ Type these inside Claude Code, in the coop-crew folder.
 | `/skip <ids>` | Closes items without submitting |
 | `/stop` | Kill switch on: every job stops at its next step |
 | `/crew-resume` | Kill switch off |
-| `/demo` | The five-minute demo on a sample student |
+| `/demo` | The five-minute demo on a sample student (`/demo --offline`: the same in seconds, no agents) |
 | `/crew-doctor` | Health check: tools, logins, schedules, disk, kill switch, last run |
 
 ## How it works

@@ -147,6 +147,19 @@ class T4_ResumeOnePage(unittest.TestCase):
         self.assertGreaterEqual(json.load(open(f'{st}/out/two/resume.check.json'))['pages'], 2)
         self.assertFalse(os.path.exists(f'{st}/out/two/resume.pdf'), 'a failed build leaves no resume.pdf')
 
+    def test_setup_base_resume_and_cv_import(self):
+        # /setup's two steps that once needed a permission prompt (mkdir && cp): both are single allowed tool commands now
+        st = make_state()
+        r = run(st, 'resume.py', 'base')
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(open(f'{st}/out/base/resume.md').read(), open(f'{st}/profile/resume.md').read())
+        bad = f'{st}/notes.txt'; open(bad, 'w').write('not a pdf')
+        self.assertNotEqual(run(st, 'import_cv.py', bad).returncode, 0)
+        self.assertFalse(os.path.exists(f'{st}/assets/cv.pdf'))
+        good = f'{st}/My CV.pdf'; shutil.copyfile(f'{ROOT}/templates/sample-student/assets/cv.pdf', good)
+        self.assertEqual(run(st, 'import_cv.py', good, check=True).returncode, 0)
+        self.assertEqual(open(f'{st}/assets/cv.pdf', 'rb').read(), open(good, 'rb').read())
+
     def test_invented_claim_fails_the_build(self):
         st = make_state(); os.makedirs(f'{st}/out/x')
         base = open(f'{SAMPLE}/resume.md').read()

@@ -1,6 +1,6 @@
 # Before the talk: install coop-crew the day before
 
-The room Wi-Fi will be shared by everyone, and the install downloads a browser engine (about 150 MB). Do it at home the
+The room Wi-Fi will be shared by everyone, and the install downloads about 280 MB, mostly a browser engine. Do it at home the
 day before. It takes about 10 minutes, most of it downloads. Bring your laptop charged.
 
 ## 1. What to install
@@ -11,7 +11,7 @@ day before. It takes about 10 minutes, most of it downloads. Bring your laptop c
 | git | `git --version` | Mac: `xcode-select --install`. Ubuntu/WSL: `sudo apt install git` |
 | Python 3.9 or newer | `python3 --version` | Mac: `xcode-select --install`. Ubuntu/WSL: `sudo apt install python3` |
 | Node.js 18 or newer (22+ for the form filler) | `node --version` | nodejs.org, or `nvm install 22` |
-| Claude Code, signed in on a **paid** Claude plan (Pro or Max) | `claude --version` | `curl -fsSL https://claude.ai/install.sh \| bash` (Windows: inside WSL), from [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup). Open a new terminal, run `claude` and follow the browser prompts to sign in; no API key is needed |
+| Claude Code, signed in on a **paid** Claude plan (Pro or Max) | `claude --version` | `curl -fsSL https://claude.ai/install.sh \| bash` (Windows: inside WSL), from [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup). If it says `~/.local/bin` is not in your PATH, run the line it prints. Open a new terminal, run `claude` and follow the browser prompts to sign in; no API key is needed |
 
 Then, in a terminal (on Windows: inside the WSL Ubuntu terminal, in your Linux home folder, not under `/mnt/c`):
 
@@ -21,8 +21,9 @@ git clone https://github.com/dudailia/coop-crew && cd coop-crew && ./install.sh 
 
 On Windows you can also open PowerShell in the cloned folder and run `.\install.ps1` (it does the same inside WSL).
 
-When `claude` starts the first time in the folder, **accept the trust dialog**. The crew's permissions and its safety
-hook only load in a trusted folder.
+When `claude` starts the first time in the folder, **accept the trust dialog**: the highlighted answer is "No, exit", so
+press the down arrow to choose "Yes, I trust this folder", then Enter. The permissions and hook it lists are the crew's
+allowed tools and its safety guard, and they only load in a trusted folder.
 
 ## 2. Check that it works
 
@@ -33,7 +34,8 @@ Inside Claude Code, in the `coop-crew` folder:
 2. `/demo`: the crew runs on a made-up student, in about 5 minutes. It should end with `Submitted: 0. Sent: 0.` and open
    TODAY.html with one review pack. This uses your Claude plan, like any Claude Code session.
 
-No Claude access, or short on time? This runs the same demo without agents, in seconds, and needs no network:
+Short on time? `/demo --offline` runs the same demo without agents, in seconds, and needs no network. No Claude access
+at all? Run it in a terminal instead:
 
 ```
 python3 -I tools/demo.py run --offline
@@ -53,7 +55,7 @@ afterwards (about 30 minutes).
 | `Skipping jev-job-search: it needs Node 22+` | Not an error: everything else works. Upgrade Node later and run `vendor/jev/install.sh` |
 | Chromium download fails or hangs | Retry on another network: `npx playwright install chromium` (WSL: `npx playwright install --with-deps chromium`) |
 | `./install.sh: Permission denied` | `bash install.sh` |
-| `claude: command not found` | Install Claude Code: `curl -fsSL https://claude.ai/install.sh \| bash` ([code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup)), then open a new terminal |
+| `claude: command not found` | Install Claude Code: `curl -fsSL https://claude.ai/install.sh \| bash` ([code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup)). If it was installed already, `~/.local/bin` is missing from your PATH: `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`, then open a new terminal |
 | `/demo` stops at permission prompts, or the safety hook seems off | Run `claude` in the folder and accept the trust dialog, then try again |
 | `/demo` says your plan has no access | Claude Code needs a paid plan (Pro or Max). Use the offline demo above |
 | `STOP: the kill switch is on` | Type `/crew-resume` |

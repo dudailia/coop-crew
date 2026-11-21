@@ -28,5 +28,5 @@ All must be true. Until then the repo stays private and nothing is pushed. `PUBL
       the repo's git config uses it.
 - [x] `python3 -I tools/pii_scan.py` (with the private pattern file outside the repo) and `gitleaks` pass over the tree
       and the history (19 Nov 2026). Rerun before the push.
-- [x] `python3 -m unittest discover -s tests` (34), `npm run test:nuworks` (11) and `tests/acceptance_fresh_install.sh`
+- [x] `python3 -m unittest discover -s tests` (35), `npm run test:nuworks` (11) and `tests/acceptance_fresh_install.sh`
       (clone, install, `/crew-doctor`, `/demo --offline`) pass (19 Nov 2026).

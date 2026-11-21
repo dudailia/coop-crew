@@ -12,7 +12,8 @@ git log -1 --format='%h %an <%ae>'       # dudailia <239183685+dudailia@users.no
 test "$(git log --all --format='%ae%n%ce' | sort -u)" = "239183685+dudailia@users.noreply.github.com"
 git tag -n1 v1.0                         # the release tag, on the last commit
 test "$(git rev-list -n1 v1.0)" = "$(git rev-parse HEAD)"
-python3 -m unittest discover -s tests    # 34 tests, OK
+python3 -m unittest discover -s tests    # 35 tests, OK
+/usr/bin/python3 -m unittest discover -s tests 2>/dev/null || python3.9 -m unittest discover -s tests   # again on Python 3.9, the oldest supported (macOS's own)
 npm run test:nuworks                     # 11 tests, pass
 python3 -I tools/pii_scan.py             # "no findings" (uses ~/.config/coop-crew/pii-patterns.txt)
 gitleaks git --no-banner .               # "no leaks found"
@@ -57,7 +58,7 @@ git tag -l v1.0                                                          # v1.0
 test ! -e docs/talk/demo.mp4 && echo "video not in git: ok"
 bash tests/acceptance_fresh_install.sh                                   # empty HOME: install, /crew-doctor, /demo --offline
 ./install.sh                                                             # the resume tests need Playwright from the install
-python3 -m unittest discover -s tests                                    # 34 tests, OK
+python3 -m unittest discover -s tests                                    # 35 tests, OK
 python3 -I tools/pii_scan.py --no-history                                # no findings (tree)
 curl -s -o /dev/null -w 'release video: %{http_code}\n' -L https://github.com/dudailia/coop-crew/releases/download/v1.0/demo.mp4   # 200
 curl -s -o /dev/null -w 'README GIF: %{http_code}\n' https://raw.githubusercontent.com/dudailia/coop-crew/main/docs/img/demo.gif     # 200

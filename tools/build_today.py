@@ -14,7 +14,7 @@ def md(s):
     for l in (s or '').splitlines():
         if re.match(r'^\s*[-*]\s+', l):
             if not ul: out.append('<ul>'); ul = True
-            out.append(f'<li>{e(re.sub(r"^\s*[-*]\s+", "", l))}</li>'); continue
+            out.append('<li>' + e(re.sub(r'^\s*[-*]\s+', '', l)) + '</li>'); continue
         if ul: out.append('</ul>'); ul = False
         if re.match(r'^#+\s', l): out.append(f'<h4>{e(l.lstrip("#").strip())}</h4>')
         elif l.startswith('|') and not re.match(r'^\|[-| :]+\|$', l.strip()):

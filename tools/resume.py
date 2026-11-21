@@ -20,7 +20,7 @@
 #
 # usage: python3 -I tools/resume.py <role-id>
 #        python3 -I tools/resume.py --md resume.md --pdf out.pdf [--role <id>]
-import html, json, os, re, subprocess, sys
+import html, json, os, re, shutil, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crew as K, check_msgs as CM
 
@@ -65,7 +65,7 @@ def to_html(meta, secs):
                            + (f'<div class="sub">{esc(sub)}</div>' if sub else '') + '</div>')
             elif re.match(r'^\s*[-*]\s+', i):
                 if not ul: out.append('<ul>'); ul = True
-                out.append(f'<li>{esc(re.sub(r"^\s*[-*]\s+", "", i))}</li>')
+                out.append('<li>' + esc(re.sub(r'^\s*[-*]\s+', '', i)) + '</li>')
             else:
                 if ul: out.append('</ul>'); ul = False
                 out.append(f'<p>{esc(i.strip())}</p>')
@@ -106,9 +106,13 @@ if __name__ == '__main__':
     a = sys.argv[1:]
     if '--md' in a:
         res = build(a[a.index('--md') + 1], a[a.index('--pdf') + 1], a[a.index('--role') + 1] if '--role' in a else None)
+    elif a and a[0] == 'base':  # the base resume from /setup: builds profile/resume.md into out/base/
+        d = f'{K.OUT}/base'; os.makedirs(d, exist_ok=True)
+        if not os.path.exists(f'{K.PROFILE}/resume.md'): sys.exit('No profile/resume.md yet: /setup writes it.')
+        shutil.copyfile(f'{K.PROFILE}/resume.md', f'{d}/resume.md'); res = build(f'{d}/resume.md', f'{d}/resume.pdf', None)
     elif a:
         d = f'{K.OUT}/{a[0]}'; res = build(f'{d}/resume.md', f'{d}/resume.pdf', a[0])
-    else: sys.exit(__doc__ or 'usage: resume.py <role-id> | --md F --pdf F')
+    else: sys.exit(__doc__ or 'usage: resume.py <role-id> | base | --md F --pdf F')
     print(f"resume: {'PASS' if res['ok'] else 'FAIL'} (pages: {res['pages']})")
     for p in res['problems']: print(f'  - {p}')
     sys.exit(0 if res['ok'] else 1)

@@ -29,7 +29,9 @@ npm run test:nuworks
    use only `profile/facts.md` and the posting.
 3. **Sources.** Company-run boards and sites only. No LinkedIn automation, no aggregators, no scraping behind logins.
    NUworks stays email-and-files by default (see `mcp/nuworks/APPROVAL.md`).
-4. **Python standard library only** in `tools/`. Node code lives in `mcp/` and the renderers.
+4. **Python standard library only** in `tools/`, and **Python 3.9 syntax**: macOS ships 3.9, so no `match`, no
+   `X | Y` type hints at runtime, and no backslashes inside f-string braces. On a Mac, run the tests with
+   `/usr/bin/python3` too. Node code lives in `mcp/` and the renderers.
 5. **No personal data in the repo**, including tests and fixtures. Use the sample student (Avery Example,
    `example.com`, 555 phone numbers). Fixtures modeled on real emails or pages must be made up from scratch, with the
    same structure only.

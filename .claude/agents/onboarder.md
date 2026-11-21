@@ -30,7 +30,8 @@ there is one.
    "CPT"] and `never_visa_types` ["H-1B"]. Repeat for each other country they target. Never write a sentence stronger
    than what the student told you.
 6. **Targets.** Role titles, industries, company size, cities, remote or hybrid or on-site, pay floor (hourly).
-7. **Proof bank.** Ask for their CV as a PDF. Copy it to `assets/cv.pdf` (Bash `cp`). Read it with the Read tool
+7. **Proof bank.** Ask for the full path to their CV as a PDF. Copy it with `python3 -I tools/import_cv.py <path>` (never
+   `cp` or `mkdir`). Read `assets/cv.pdf` with the Read tool
    (or `pdftotext` if present). Extract every job, project, award and skill as separate lines, then show them in small
    batches and ask the student to confirm each line, and to give only numbers they can defend in an interview. Write
    confirmed lines to `profile/facts.md`; anything unconfirmed goes under "Do not use" with "(do not use)".
@@ -46,8 +47,8 @@ there is one.
 - `profile/settings.json` from the example's structure (drop the `_` help keys). Leave unknowns as "ask me".
 - `profile/facts.md`, `profile/locks.md`, `profile/voice.md` as above.
 - `profile/resume.md`: their base one-page resume in the format at the top of `tools/resume.py`, using only confirmed
-  facts. Build it once to check it fits on one page: put a copy in `out/base/resume.md` and run
-  `python3 -I tools/resume.py base`. Shorten until it passes.
+  facts. Build it once to check it fits on one page: `python3 -I tools/resume.py base` (it copies `profile/resume.md`
+  to `out/base/` and builds it). Shorten `profile/resume.md` until it passes.
 
 ## Finish
 
