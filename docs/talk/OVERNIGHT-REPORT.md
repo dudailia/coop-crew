@@ -1,5 +1,37 @@
 # Overnight report
 
+## 21 November 2026, evening: new-student test
+
+The README was followed word for word as a student new to Claude Code, three times from scratch:
+- an empty home folder and Claude Code from the official installer;
+- macOS's own Python 3.9;
+- the interactive session in the default permission mode;
+- `/demo --offline`, `/setup` with a made-up student (Jordan Rivera, example.com), `/crew-doctor`, `/today`, `/approve`,
+  `/skip`, `/stop` and `/crew-resume`.
+
+`/approve` and `/skip` also ran on packs from the offline sample roles, with the form filler mocked: exactly one
+submit, for the approved id.
+
+**Round 1 fixes**
+- `resume.py` and `build_today.py` didn't parse on Python 3.9 (a backslash inside f-string braces). The tests passed
+  only because they ran on 3.13. PUBLISH.md and the fresh-install test now also use 3.9.
+- `/setup` stopped at two permission prompts (`mkdir && cp`). These are now `tools/import_cv.py` and
+  `resume.py base`. The `cp` allow rule, which caused a warning at every start, is gone.
+- README, GUIDE and BEFORE-THE-TALK now cover:
+  - the installer's PATH line, without which `claude --version` gives "command not found" on a new Mac;
+  - about 280 MB to download, and up to 5 minutes;
+  - the trust dialog's default answer being "No, exit";
+  - `/demo --offline`.
+
+**Round 2 fixes**
+- `/today` was refused in the default mode (it chained `open` and `cat`). It is now `tools/today.py`.
+- A title that names its term ("Spring 2027") is now checked against the student's cycle and year, as the README
+  promises. The dry run relabels its sample roles to the student's term.
+- `/setup` wording: a reply of "confirmed" needs nothing more, and dry-run packs can't be approved.
+- `pii_scan` skips diff hunk headers, which split an address in two.
+
+**Round 3: no fixes needed.**
+
 ## 21 November 2026: re-shoot, install line, published
 
 - **Re-shot from the offline demo.** `docs/img/*.png`, the README GIF, `docs/talk/img/*.jpg`, the deck and

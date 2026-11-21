@@ -35,6 +35,19 @@ gh repo edit dudailia/coop-crew --add-topic claude-code --add-topic co-op --add-
 gh api -X PUT repos/dudailia/coop-crew/private-vulnerability-reporting   # SECURITY.md's "Report a vulnerability"
 ```
 
+## 1b. Already published: push fixes into v1.0 (only within a day or so of the first publish)
+
+Run the preflight above without its last line (the repo exists), after moving the tag to the fixed commit:
+
+```
+set -e
+git tag -f -a v1.0 -m "coop-crew v1.0" && git push origin main && git push -f origin v1.0
+gh release edit v1.0 --notes-file docs/releases/v1.0.md
+gh release view v1.0 --json assets,tagName --jq '.tagName, .assets[].name'   # v1.0, demo.mp4
+```
+
+Then skip to section 3.
+
 ## 2. Create the release with the video
 
 ```
