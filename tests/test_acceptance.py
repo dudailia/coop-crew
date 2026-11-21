@@ -223,6 +223,20 @@ class T6_SelfDevelopedBanned(unittest.TestCase):
                              env={**os.environ, 'COOP_STATE': st}, capture_output=True, text=True).stdout.strip()
         self.assertEqual(out, 'None')
 
+class Screen_CoopTermInTitle(unittest.TestCase):
+    def test_a_titled_term_must_be_the_students_cycle_and_year(self):
+        # the sample student's co-op is spring 2027 (2027-01-04 to 2027-06-25)
+        st = make_state(); os.makedirs(f'{st}/data/incoming', exist_ok=True)
+        titles = {'Software Engineering Co-op (Spring 2027)': None, 'Software Engineering Co-op [Fall 2027]': 'DQ',
+                  'Software Engineering Co-op - Spring 2028': 'DQ', 'Software Engineering Co-op': None}
+        json.dump([{'source': 'web', 'company': f'Fernway {i}', 'title': t, 'location': 'Boston, MA', 'url': f'https://example.com/jobs/{i}',
+                    'description': 'A six-month co-op.'} for i, t in enumerate(titles)], open(f'{st}/data/incoming/r.json', 'w'))
+        run(st, 'pipeline.py', 'import', check=True); run(st, 'screen_rules.py', check=True)
+        got = {r['title']: (r['verdict'] or None, r['reason']) for r in db(st).execute('select title, verdict, reason from roles')}
+        for t, want in titles.items():
+            self.assertEqual(got[t][0], want, f'{t}: {got[t]}')
+        self.assertIn("the student's co-op is spring 2027", got['Software Engineering Co-op [Fall 2027]'][1])
+
 class T8_KillSwitch(unittest.TestCase):
     def guard(self, st, tool, inp):
         return subprocess.run([sys.executable, '-I', f'{TOOLS}/guard.py'], input=json.dumps({'tool_name': tool, 'tool_input': inp}),

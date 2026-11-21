@@ -68,6 +68,15 @@ def judge(r, text, offline=False):
         return 'DQ', f'summer internship (by its title); the student\'s co-op is a {cycle} cycle', ''
     if cycle and cycle != 'summer' and SUMMER_ONLY.search(title + ' ' + text[:1500]) and not re.search(r'co-?op|fall|spring|winter|6[- ]month|six[- ]month', title + ' ' + text[:1500], re.I):
         return 'DQ', f'summer-only internship; the student\'s co-op is a {cycle} cycle', ''
+    # A title that names its co-op term ("Spring 2027", "[Fall 2027]") must be the student's cycle and year: Northeastern's
+    # spring cycle is January to June and fall is July to December, so a spring role cannot fit a fall co-op.
+    m = re.search(r'\b(spring|fall|autumn)\b[\s,/-]*(20\d\d)\b', title, re.I)
+    start = K.S['coop'].get('start') or ''
+    if m and cycle in ('spring', 'fall') and re.match(r'20\d\d', start):
+        season = 'fall' if m.group(1).lower() in ('fall', 'autumn') else 'spring'
+        if (season, m.group(2)) != (cycle, start[:4]):
+            return 'DQ', (f'titled {m.group(1).title()} {m.group(2)}; the student\'s co-op is {cycle} {start[:4]} '
+                          f'({start} to {K.S["coop"].get("end") or "?"})'), ''
     if offline: return 'KEEP', 'offline rules: title, dates, eligibility and locks pass (no agent judgment in offline mode)', ''
     return None, '', ''
 

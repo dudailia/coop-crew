@@ -71,6 +71,7 @@ def main():
                 if line.startswith('COMMIT '): commit, path = f'history {line[7:15]}', ''
                 else: path = line.split(' b/', 1)[-1]
                 continue
+            if line.startswith('@@'): continue  # hunk headers repeat a line cut short, which can split an address; the full line is scanned anyway
             chunk.append(line)
         flush()
     seen = set(); out = []
