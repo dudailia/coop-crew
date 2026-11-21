@@ -55,6 +55,8 @@ cd "$T/coop-crew"
 git log --all --format='%ae' | sort -u                                   # only the no-reply address
 git tag -l v1.0                                                          # v1.0
 test ! -e docs/talk/demo.mp4 && echo "video not in git: ok"
+bash tests/acceptance_fresh_install.sh                                   # empty HOME: install, /crew-doctor, /demo --offline
+./install.sh                                                             # the resume tests need Playwright from the install
 python3 -m unittest discover -s tests                                    # 34 tests, OK
 python3 -I tools/pii_scan.py --no-history                                # no findings (tree)
 curl -s -o /dev/null -w 'release video: %{http_code}\n' -L https://github.com/dudailia/coop-crew/releases/download/v1.0/demo.mp4   # 200
