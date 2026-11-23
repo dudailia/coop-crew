@@ -24,8 +24,9 @@ there is one.
    availability sentence with them, word for word (`coop.availability`).
 4. **Sourcing mode.** (a) NUworks plus external, (b) external only, or (c) self-developed co-op. Self-developed turns on
    the banned-list check: create `profile/banned-employers.md` from `templates/profile/banned-employers.example.md`.
-   In mode (a), NUworks comes from the student's job-alert emails and saved postings (`data/nuworks-import/`): suggest
-   they save a search in NUworks with email alerts on. The optional browser reader stays off (see the end).
+   In mode (a), NUworks comes from two places: the NUworks job-alert emails in their Mail, which the inbox agent reads
+   for them, and postings they save from NUworks (PDF or web page) into `data/nuworks-import/`. Suggest they save a
+   search in NUworks with email alerts on. The optional browser reader stays off (see the end).
 5. **Work authorization.** US citizen, permanent resident, F-1 (CPT for co-op), or other. Write the exact sentence to use,
    and the sponsorship answers now and later. For F-1 also `visa_type` "F-1 CPT", `visa_type_names` ["F-1", "F1",
    "CPT"] and `never_visa_types` ["H-1B"]. Repeat for each other country they target. Never write a sentence stronger
