@@ -24,6 +24,10 @@ All must be true. Until then the repo stays private and nothing is pushed. `PUBL
       `docs/img/` and `docs/talk/img/`, all 13 slides and frames of `demo.mp4` checked by eye. They show page text
       only.
 - [x] The README images show only the sample student (`docs/img/demo.gif`, checked 19 Nov 2026).
+- [x] v1.1 media (23 Nov 2026): `demo.mp4` (1810 frames) and `docs/img/demo.gif` (209 frames) re-recorded from the
+      offline demo; every GIF frame and every fifth video frame read by OCR (only Quillstack Data, Fernway Finance,
+      Harborlight Robotics, Northwind Freight and the sample student's university), and the pages have no images. The
+      banner and social preview are original HTML drawings with no logos.
 - [x] Commit author and committer are `239183685+dudailia@users.noreply.github.com` on every commit (19 Nov 2026), and
       the repo's git config uses it.
 - [x] `python3 -I tools/pii_scan.py` (with the private pattern file outside the repo) and `gitleaks` pass over the tree

@@ -1,7 +1,8 @@
-# Publishing coop-crew v1.0
+# Publishing coop-crew
 
-The exact steps to make the repository public, push it, and create the v1.0 release with the demo video. Run them from
-the repo root, in order. Each block stops at the first failure (`set -e`).
+The exact steps to make the repository public, push it, and create the v1.0 release with the demo video (sections 0 to
+3), and to publish a later version such as v1.1 (section 5). Run them from the repo root, in order. Each block stops at
+the first failure (`set -e`).
 
 ## 0. Preflight (local, changes nothing)
 
@@ -17,7 +18,7 @@ python3 -m unittest discover -s tests    # 36 tests, OK
 npm run test:nuworks                     # 11 tests, pass
 python3 -I tools/pii_scan.py             # "no findings" (uses ~/.config/coop-crew/pii-patterns.txt)
 gitleaks git --no-banner .               # "no leaks found"
-ls -l docs/talk/demo.mp4                 # 1229869 bytes; gitignored, attached to the release below
+ls -l docs/talk/demo.mp4                 # gitignored, attached to the release below (v1.1: 30 fps, 60 s)
 gh auth status                           # signed in to github.com as dudailia
 gh repo view dudailia/coop-crew >/dev/null 2>&1 && echo "STOP: the repo already exists" && exit 1 || true
 ```
@@ -86,6 +87,26 @@ slide 12 of `docs/talk/slides.html` opens the repo, and the release page shows `
 
 - Post the LinkedIn draft yourself (`LINKEDIN.md`, local and gitignored). Nothing in coop-crew posts to LinkedIn.
 - Delete the local backup bundles in `logs/` once you are happy with the public history.
+- Upload the social preview by hand (GitHub has no API for it): Settings, General, Social preview, Edit, Upload an
+  image, and pick `docs/social-preview.png` (1280x640).
+
+## 5. A new version (v1.1 and later)
+
+Record the media from the offline demo first (`tools/record_demo.sh --offline`: `docs/talk/demo.mp4` and
+`docs/img/demo.gif`, checked for even motion and size), write `docs/releases/vX.Y.md` and the CHANGELOG entry, commit,
+then run the preflight with `V` in place of v1.0:
+
+```
+set -e
+V=v1.1
+git tag -a $V -m "coop-crew $V" && git push origin main && git push origin $V
+gh release create $V docs/talk/demo.mp4 --verify-tag --title "coop-crew $V" --notes-file docs/releases/$V.md --latest
+gh release view $V --json assets,tagName --jq '.tagName, .assets[].name'   # v1.1, demo.mp4
+gh repo edit dudailia/coop-crew --template --enable-discussions --homepage https://github.com/dudailia/coop-crew/releases/latest
+gh run list --workflow tests.yml --limit 1                                    # completed, success: the README badge is green
+```
+
+Then section 3 with `$V` for v1.0 in the release-video URL.
 
 ## Undo
 

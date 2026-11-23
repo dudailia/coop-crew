@@ -1,0 +1,33 @@
+/* Shared look for the banner and the social preview: navy, cream and amber, the colours of the demo captions. */
+:root { --navy: #0d1522; --navy2: #16233a; --line: #2a3a57; --cream: #f7f0e2; --amber: #ffb547; --mint: #7fd8be; --muted: #9fb0c8; }
+* { box-sizing: border-box; margin: 0; }
+html, body { background: var(--navy); }
+body { font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif; color: var(--cream); overflow: hidden; }
+.frame { position: relative; overflow: hidden; background:
+  radial-gradient(900px 500px at 85% 10%, rgba(255,181,71,.10), transparent 60%),
+  radial-gradient(700px 500px at 0% 100%, rgba(127,216,190,.08), transparent 60%), var(--navy); }
+.grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(159,176,200,.16) 1.2px, transparent 1.3px); background-size: 28px 28px; }
+.kicker { font-size: 15px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--amber); }
+.word { font-weight: 800; letter-spacing: -.035em; line-height: .95; }
+.word span { color: var(--amber); }
+.tag { color: #d9e1ec; font-weight: 500; line-height: 1.35; }
+.tag b { color: var(--cream); font-weight: 700; }
+/* the crew: agent pills joined by a line, flowing into the morning page */
+.crew { position: absolute; display: flex; flex-direction: column; gap: 12px; }
+.pill { display: flex; align-items: center; gap: 10px; padding: 9px 16px 9px 12px; border-radius: 999px; background: var(--navy2);
+  border: 1.5px solid var(--line); font-size: 15px; font-weight: 600; color: #dfe7f1; white-space: nowrap; min-width: 150px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(127,216,190,.18); }
+.pill.a .dot { background: var(--amber); box-shadow: 0 0 0 4px rgba(255,181,71,.2); }
+.rail { position: absolute; border-left: 2px dashed var(--line); }
+.page { position: absolute; border-radius: 16px; background: var(--cream); color: #1b2433; box-shadow: 0 24px 60px rgba(0,0,0,.45); padding: 22px 24px; }
+.page h4 { font-size: 21px; font-weight: 800; letter-spacing: -.01em; }
+.page .sub { font-size: 12.5px; color: #5d6676; margin: 4px 0 14px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid #e4dccb; }
+.row .t { font-size: 14.5px; font-weight: 700; } .row .m { font-size: 12px; color: #6a7383; margin-top: 2px; }
+.btns { display: flex; gap: 6px; }
+.btn { font-size: 12px; font-weight: 700; padding: 6px 11px; border-radius: 8px; border: 1.5px solid #c9bfa9; color: #4b5463; }
+.btn.ok { border-color: #2f7a4d; color: #2f7a4d; background: #e6f2ea; }
+.bar { height: 7px; border-radius: 4px; background: #e8dfcd; margin-top: 7px; } .bar.s { width: 70%; }
+.seal { position: absolute; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 12px;
+  background: rgba(255,181,71,.12); border: 1.5px solid rgba(255,181,71,.5); color: var(--cream); font-weight: 700; font-size: 15px; }
+.seal i { font-style: normal; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--amber); color: var(--navy); font-size: 14px; }

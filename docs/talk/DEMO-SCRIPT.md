@@ -1,6 +1,6 @@
 # Demo script: two minutes
 
-What the room sees: `docs/talk/demo.mp4` (78 seconds, no sound, captions on screen; not in git: download it from the
+What the room sees: `docs/talk/demo.mp4` (60 seconds at 30 fps, no sound, captions on screen; not in git: download it from the
 release into `docs/talk/`, or record it), recorded by `tools/record_demo.sh --offline` from the offline demo on the
 made-up sample student, Avery Example. Every company in it is made up too. You talk over it. Have it open in a second
 tab before the talk, and the deck on slide 4 ("one night") when you start.
@@ -21,13 +21,13 @@ Press play.
 | Video | On screen | Say |
 |---|---|---|
 | 0:00 | TODAY.html, top | "This is the one page you read each morning. Everything the crew did overnight is here." |
-| 0:12 | The review pack | "The review pack. First, why this role passed: title, dates, eligibility, your rules. Under it, a short company brief. With agents on, the brief also reads the company's own site." |
-| 0:22 | Soft flags | "Soft flags are what you should know before you approve. Here: the rules judged this role instead of an agent, the brief is from the posting only, and the portal's own questions were not pulled, so check the live form." |
-| 0:31 | Field log | "The field log: every field in the application form, and where its value came from. Nothing is typed from thin air." |
-| 0:39 | Approve / Skip | "And then you decide. Approve sends that exact id to the applicant, which re-checks the form and submits it. Skip drops it. Nothing else moves." |
-| 0:45 | The resume | "This is the resume built for this one role. One page, plain enough for an applicant tracking system. Every number and every name is checked against the student's own facts file; an invented number or employer fails the build." |
-| 0:59 | The tracker | "And the tracker keeps every role and what happened to it: a deadline that passed, a city the student can't work in, so nothing gets lost." |
-| 1:06 | Closing caption | "That's it. Twenty minutes a day, and you stay the one who presses the button." |
+| 0:08 | The review pack | "The review pack. First, why this role passed: title, dates, eligibility, your rules. Under it, a short company brief." |
+| 0:16 | Soft flags | "Soft flags: what to check before you approve. Here, the rules judged this role instead of an agent, so check the live form." |
+| 0:25 | Field log | "The field log: every field in the form, and where its value came from. Nothing is typed from thin air." |
+| 0:31 | Approve / Skip | "Then you decide. Approve sends that exact id to the applicant, which re-checks the form and submits it. Skip drops it." |
+| 0:35 | The resume | "The resume built for this one role. One page, plain enough for an applicant tracking system, and every number and name is checked against the student's own facts." |
+| 0:45 | The tracker | "The tracker keeps every role and what happened to it: a deadline that passed, a city the student can't work in." |
+| 0:53 | Closing caption | "That's it. Twenty minutes a day, and you stay the one who presses the button." |
 
 When a live run has a role that might break one of the student's rules, TODAY.html opens with **Questions for you
 (HOLD)**: the crew asks instead of guessing. The offline recording has none; mention it if someone asks.

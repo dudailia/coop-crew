@@ -1,6 +1,6 @@
 {
   "name": "coop-crew",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "A multi-agent co-op and internship search crew for students, built on Claude Code.",

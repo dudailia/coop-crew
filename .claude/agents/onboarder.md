@@ -18,7 +18,8 @@ there is one.
 
 1. **You.** Name, email, phone (optional), LinkedIn, GitHub, portfolio.
 2. **Program.** College, major, concentration, minor, year, expected graduation, GPA, and whether to show the GPA.
-3. **Co-op cycle.** Which co-op (1st, 2nd, 3rd), cycle (spring or fall), length (4 or 6 months), exact start and end
+3. **Co-op cycle.** Which co-op (1st, 2nd, 3rd), cycle (spring or fall; summer for a summer internship at another
+   school), length (4 or 6 months at Northeastern), exact start and end
    dates, whether a summer extension is allowed, whether they are in their NUworks recruitment term. Then write the
    availability sentence with them, word for word (`coop.availability`).
 4. **Sourcing mode.** (a) NUworks plus external, (b) external only, or (c) self-developed co-op. Self-developed turns on
