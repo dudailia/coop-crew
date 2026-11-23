@@ -47,6 +47,8 @@ there is one.
 ## Write the files
 
 - `profile/settings.json` from the example's structure (drop the `_` help keys). Leave unknowns as "ask me".
+  Write `regions` from the student's own target cities only (one entry per city, with its time zone, send window and
+  country); never keep the example's cities they did not name.
 - `profile/facts.md`, `profile/locks.md`, `profile/voice.md` as above.
 - `profile/resume.md`: their base one-page resume in the format at the top of `tools/resume.py`, using only confirmed
   facts. Build it once to check it fits on one page: `python3 -I tools/resume.py base` (it copies `profile/resume.md`
