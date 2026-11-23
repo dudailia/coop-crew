@@ -19,6 +19,9 @@ Easier to start, easier to watch, the same crew. No change to what the crew does
 - **A social preview image** (`docs/social-preview.png`, 1280x640) and the README banner, both drawn from HTML in
   `docs/img/src/` by `tools/render_art.mjs`.
 - `/setup` accepts a summer cycle, for a summer internship at another school.
+- `/setup`, from the new-student test: it explains that NUworks alert emails are read from Mail and only saved
+  postings go in `data/nuworks-import/`, and it writes email regions from the student's own cities only (a template
+  city no longer slips in).
 - The project's Claude Code settings turn off the co-author and pull request attribution lines Claude Code adds by
   default (`attribution` in `.claude/settings.json`).
 - The commit history was rewritten to drop those co-author lines from earlier commit messages. Every commit keeps its
