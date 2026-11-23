@@ -1,0 +1,35 @@
+# Runs the test suite on every push and pull request, on the oldest and newest Python coop-crew supports
+# (3.9 is what macOS ships). The installer runs first, as it does on a student's machine.
+name: tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.9', '3.13']
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0          # the personal-data scan reads the full history
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install (./install.sh, as a student would)
+        run: ./install.sh
+      - name: Python tests
+        run: python3 -m unittest discover -s tests -v
+      - name: NUworks server tests
+        run: npm run test:nuworks
+      - name: Personal-data scan (files and history)
+        run: python3 -I tools/pii_scan.py
