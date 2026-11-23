@@ -106,8 +106,8 @@ flowchart TD
     editor -- "applications" --> gatekeeper["gatekeeper<br/>review pack, field log, soft flags"]
     gatekeeper --> today[["TODAY.html"]]
     editor -- "email drafts" --> today
-    today -- "you type /approve &lt;id&gt;" --> applicant["applicant<br/>re-checks the form, submits it"]
-    today -- "you type /approve &lt;id&gt;" --> sender["send_due.py<br/>sends in the send window"]
+    today -- "you type /approve id" --> applicant["applicant<br/>re-checks the form, submits it"]
+    today -- "you type /approve id" --> sender["send_due.py<br/>sends in the send window"]
     applicant --> tracker["tracker<br/>pipeline, MORNING.md, tracker.html"]
     sender --> tracker
 ```
